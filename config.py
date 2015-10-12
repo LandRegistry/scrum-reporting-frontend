@@ -5,13 +5,16 @@ class Config(object):
     LOGGING_PATH = os.getenv('LOGGING_PATH', 'python_logging/logging.yaml')
 
 class DevelopmentConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'postgresql+pg8000://scrum-users:scrum-users@localhost/scrum-users'
-    SECRET_KEY = '123456790'
-    SALT = 'passwordsalt'
+    SQLALCHEMY_DATABASE_URI = os.environ['SQLALCHEMY_DATABASE_URI']
+    SECRET_KEY = os.environ['SECRET_KEY']
+    SALT = os.environ['SALT']
+    SCRUM_API = os.environ['SCRUM_API']
     DEBUG = True
 
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'postgresql+pg8000://scrum-users:scrum-users@localhost/scrum-users'
+    SQLALCHEMY_DATABASE_URI = os.environ['SQLALCHEMY_DATABASE_URI']
+    SECRET_KEY = os.environ['SECRET_KEY']
+    SALT = os.environ['SALT']
+    SCRUM_API = os.environ['SCRUM_API']
+
     DEBUG = True
-    SECRET_KEY = '123456790'
-    SALT = 'passwordsalt'

@@ -82,11 +82,11 @@ def add_programme():
         programme_name = form.programme_name.data
         programme_manager = form.programme_manager.data
         service_manager = form.service_manager.data
-        response = requests.get('http://localhost:5000/get/programmes')
+        response = requests.get(app.config['SCRUM_API'] + '/get/programmes')
         data = response.json()
         if not any(d['name'] == programme_name for d in data):
             payload = {"programme_name":programme_name,"programme_manager":programme_manager, "service_manager": service_manager}
-            requests.post('http://localhost:5000/add/programme', data=json.dumps(payload))
+            requests.post(app.config['SCRUM_API'] + '/add/programme', data=json.dumps(payload))
             flash('Programme {0} added'.format(programme_name))
             return redirect(url_for('index'))
         else:
@@ -100,7 +100,7 @@ def add_programme():
 @login_required
 def add_project(programme_id):
 
-    response = requests.get('http://localhost:5000/get/programme/{0}'.format(programme_id))
+    response = requests.get(app.config['SCRUM_API'] + '/get/programme/{0}'.format(programme_id))
     programme_data = response.json()
     form = ProjectForm(request.form)
     if request.method == 'GET':
@@ -112,7 +112,7 @@ def add_project(programme_id):
         project_description = form.project_description.data
         if not any(d['name'] == project_name for d in programme_data['projects']):
             payload = {"project_name":project_name, "programme_id": programme_id, "product_owner": product_owner, "scrum_master": scrum_master, "project_description": project_description}
-            requests.post('http://localhost:5000/add/project', data=json.dumps(payload))
+            requests.post(app.config['SCRUM_API'] + '/add/project', data=json.dumps(payload))
             flash('Project {0} added'.format(project_name))
             return redirect(url_for('index'))
         else:
@@ -123,7 +123,7 @@ def add_project(programme_id):
 
 @app.route('/project/<project_id>', methods=['GET'])
 def project(project_id):
-    response = requests.get('http://localhost:5000/get/project/{0}'.format(project_id))
+    response = requests.get(app.config['SCRUM_API'] + '/get/project/{0}'.format(project_id))
     project_data = response.json()
 
     velocity_key = []
@@ -139,13 +139,13 @@ def project(project_id):
 
 @app.route('/project/<project_id>/add_sprint', methods=['GET', 'POST'])
 def add_sprint(project_id):
-    response = requests.get('http://localhost:5000/get/project/{0}'.format(project_id))
+    response = requests.get(app.config['SCRUM_API'] + '/get/project/{0}'.format(project_id))
     project_data = response.json()
     form = SprintForm(request.form)
     if request.method == 'GET':
 
         if project_data['last_sprint_id'] != '':
-            response = requests.get('http://localhost:5000/get/project/{0}/{1}'.format(project_id, project_data['last_sprint_id']))
+            response = requests.get(app.config['SCRUM_API'] + '/get/project/{0}/{1}'.format(project_id, project_data['last_sprint_id']))
             sprint_data = response.json()
             form.sprint_number.data = int(sprint_data['sprint_number']) + 1
             form.sprint_days.data = str(sprint_data['sprint_days'])
@@ -172,7 +172,7 @@ def add_sprint(project_id):
         if form.validate_on_submit():
             if not any(d['sprint_number'] == str(sprint_number) for d in project_data['sprint_array']):
                 payload = {"project_id": project_id, "start_date": start_date, "end_date": end_date, "sprint_number": sprint_number, "sprint_rag": sprint_rag, "sprint_goal": sprint_goal, "sprint_deliverables": "", "sprint_challenges": "", "agreed_points": agreed_points, "delivered_points": "0", "started_points": "0", "sprint_issues": sprint_issues, "sprint_risks": sprint_risks, "sprint_dependencies": sprint_dependencies, "sprint_days": sprint_days  }
-                response = requests.post('http://localhost:5000/add/sprint', data=json.dumps(payload))
+                response = requests.post(app.config['SCRUM_API'] + '/add/sprint', data=json.dumps(payload))
                 sprint_data = response.json()
 
                 print(sprint_data)
@@ -182,7 +182,7 @@ def add_sprint(project_id):
                     sprint_days_array.append({"sprint_day": str(i), "sprint_done": "0"})
 
                 payload = {"sprint_id": str(sprint_data['id']), "sprint_days": sprint_days_array}
-                requests.post('http://localhost:5000/update/burn_down', data=json.dumps(payload))
+                requests.post(app.config['SCRUM_API'] + '/update/burn_down', data=json.dumps(payload))
 
                 flash('Add Sprint {0} for {1}'.format(sprint_number, project_data['name']))
                 return redirect(url_for('project', project_id=project_id))
@@ -195,10 +195,10 @@ def add_sprint(project_id):
 
 @app.route('/project/<project_id>/<sprint_id>', methods=['GET', 'POST'])
 def sprint(project_id, sprint_id):
-    response = requests.get('http://localhost:5000/get/project/{0}'.format(project_id, sprint_id))
+    response = requests.get(app.config['SCRUM_API'] + '/get/project/{0}'.format(project_id, sprint_id))
     project_data = response.json()
 
-    response = requests.get('http://localhost:5000/get/project/{0}/{1}'.format(project_id, sprint_id))
+    response = requests.get(app.config['SCRUM_API'] + '/get/project/{0}/{1}'.format(project_id, sprint_id))
     sprint_data = response.json()
 
     points_per_day = sprint_data['agreed_points'] / sprint_data['sprint_days']
@@ -224,10 +224,10 @@ def sprint(project_id, sprint_id):
 
 @app.route('/project/<project_id>/<sprint_id>/burndown', methods=['GET', 'POST'])
 def view_burndown(project_id, sprint_id):
-    response = requests.get('http://localhost:5000/get/project/{0}'.format(project_id, sprint_id))
+    response = requests.get(app.config['SCRUM_API'] + '/get/project/{0}'.format(project_id, sprint_id))
     project_data = response.json()
 
-    response = requests.get('http://localhost:5000/get/project/{0}/{1}'.format(project_id, sprint_id))
+    response = requests.get(app.config['SCRUM_API'] + '/get/project/{0}/{1}'.format(project_id, sprint_id))
     sprint_data = response.json()
 
     points_per_day = sprint_data['agreed_points'] / sprint_data['sprint_days']
@@ -253,10 +253,10 @@ def view_burndown(project_id, sprint_id):
 
 @app.route('/project/<project_id>/edit_sprint/<sprint_id>', methods=['GET', 'POST'])
 def edit_sprint(project_id, sprint_id):
-    response = requests.get('http://localhost:5000/get/project/{0}'.format(project_id, sprint_id))
+    response = requests.get(app.config['SCRUM_API'] + '/get/project/{0}'.format(project_id, sprint_id))
     project_data = response.json()
 
-    response = requests.get('http://localhost:5000/get/project/{0}/{1}'.format(project_id, sprint_id))
+    response = requests.get(app.config['SCRUM_API'] + '/get/project/{0}/{1}'.format(project_id, sprint_id))
     sprint_data = response.json()
 
     form = SprintForm(request.form)
@@ -289,7 +289,7 @@ def edit_sprint(project_id, sprint_id):
 
             if sprint_num_found == False:
                 payload = {"project_id":project_id, "sprint_days": form.sprint_days.data, "start_date": str(form.start_date.data), "end_date": str(form.end_date.data), "sprint_number": form.sprint_number.data, "sprint_rag": form.sprint_rag.data, "sprint_goal": form.sprint_goal.data, "sprint_deliverables": form.sprint_deliverables.data, "sprint_challenges": form.sprint_challenges.data, "agreed_points": form.agreed_points.data, "delivered_points": sprint_data['delivered_points'], "started_points": form.started_points.data, "sprint_issues": form.sprint_issues.data, "sprint_risks": form.sprint_risks.data, "sprint_dependencies": form.sprint_dependencies.data  }
-                requests.post('http://localhost:5000/update/sprint/{0}'.format(sprint_id), data=json.dumps(payload))
+                requests.post(app.config['SCRUM_API'] + '/update/sprint/{0}'.format(sprint_id), data=json.dumps(payload))
                 sprint_data = response.json()
 
                 flash('Sprint Updated')
@@ -302,10 +302,10 @@ def edit_sprint(project_id, sprint_id):
 
 @app.route('/edit_project/<project_id>', methods=['GET', 'POST'])
 def edit_project(project_id):
-    response = requests.get('http://localhost:5000/get/project/{0}'.format(project_id))
+    response = requests.get(app.config['SCRUM_API'] + '/get/project/{0}'.format(project_id))
     project_data = response.json()
 
-    response = requests.get('http://localhost:5000/get/programme/{0}'.format(project_data['programme_id']))
+    response = requests.get(app.config['SCRUM_API'] + '/get/programme/{0}'.format(project_data['programme_id']))
     programme_data = response.json()
 
     form = ProjectForm(request.form)
@@ -328,7 +328,7 @@ def edit_project(project_id):
 
             if project_name_found == False:
                 payload = {"project_name":form.project_name.data, "programme_id": project_data['programme_id'], "product_owner": form.product_owner.data, "scrum_master": form.scrum_master.data, "project_description": form.project_description.data}
-                requests.post('http://localhost:5000/update/project/{0}'.format(project_id), data=json.dumps(payload))
+                requests.post(app.config['SCRUM_API'] + '/update/project/{0}'.format(project_id), data=json.dumps(payload))
 
                 flash('Project Updated')
                 return redirect(url_for('project', project_id=project_id))
@@ -340,10 +340,10 @@ def edit_project(project_id):
 
 @app.route('/edit_programme/<programme_id>', methods=['GET', 'POST'])
 def edit_programme(programme_id):
-    response = requests.get('http://localhost:5000/get/programme/{0}'.format(programme_id))
+    response = requests.get(app.config['SCRUM_API'] + '/get/programme/{0}'.format(programme_id))
     programme_data = response.json()
 
-    response = requests.get('http://localhost:5000/get/programmes')
+    response = requests.get(app.config['SCRUM_API'] + '/get/programmes')
     data = response.json()
 
     form = ProgrammeForm(request.form)
@@ -365,7 +365,7 @@ def edit_programme(programme_id):
 
             if programme_name_found == False:
                 payload = {"programme_name":form.programme_name.data,"programme_manager":form.programme_manager.data, "service_manager": form.programme_manager.data}
-                requests.post('http://localhost:5000/update/programme/{0}'.format(programme_id), data=json.dumps(payload))
+                requests.post(app.config['SCRUM_API'] + '/update/programme/{0}'.format(programme_id), data=json.dumps(payload))
 
                 flash('Programme Updated')
                 return redirect(url_for('programme', programme_id=programme_id))
@@ -378,10 +378,10 @@ def edit_programme(programme_id):
 
 @app.route('/project/<project_id>/edit_sprint/<sprint_id>/burndown', methods=['GET', 'POST'])
 def burndown(project_id, sprint_id):
-    response = requests.get('http://localhost:5000/get/project/{0}'.format(project_id, sprint_id))
+    response = requests.get(app.config['SCRUM_API'] + '/get/project/{0}'.format(project_id, sprint_id))
     project_data = response.json()
 
-    response = requests.get('http://localhost:5000/get/project/{0}/{1}'.format(project_id, sprint_id))
+    response = requests.get(app.config['SCRUM_API'] + '/get/project/{0}/{1}'.format(project_id, sprint_id))
     sprint_data = response.json()
 
     if request.method == 'GET':
@@ -396,10 +396,10 @@ def burndown(project_id, sprint_id):
             sprint_days_array.append({"sprint_day": sprintdays[i], "sprint_done": pointsdones[i]})
 
         payload = {"sprint_id": str(sprint_id), "sprint_days": sprint_days_array}
-        requests.post('http://localhost:5000/update/burn_down', data=json.dumps(payload))
+        requests.post(app.config['SCRUM_API'] + '/update/burn_down', data=json.dumps(payload))
 
         payload = {"project_id":sprint_data['project_id'], "sprint_days": sprint_data['sprint_days'], "start_date": sprint_data['start_date'], "end_date": sprint_data['end_date'], "sprint_number": sprint_data['sprint_number'], "sprint_rag": sprint_data['sprint_rag'], "sprint_goal": sprint_data['sprint_goal'], "sprint_deliverables": sprint_data['sprint_deliverables'], "sprint_challenges": sprint_data['sprint_challenges'], "agreed_points": sprint_data['agreed_points'], "delivered_points": str(points_done), "started_points": sprint_data['started_points'], "sprint_issues": sprint_data['sprint_issues'], "sprint_risks": sprint_data['sprint_risks'], "sprint_dependencies": sprint_data['sprint_dependencies']  }
-        requests.post('http://localhost:5000/update/sprint/{0}'.format(sprint_id), data=json.dumps(payload))
+        requests.post(app.config['SCRUM_API'] + '/update/sprint/{0}'.format(sprint_id), data=json.dumps(payload))
 
         flash('Burndown Updated')
         return redirect(url_for('sprint', project_id=project_id, sprint_id=sprint_id))
@@ -407,18 +407,18 @@ def burndown(project_id, sprint_id):
 
 @app.route('/delete/sprint/<project_id>/<sprint_id>', methods=['GET', 'POST'])
 def delete_sprint(project_id, sprint_id):
-    response = requests.get('http://localhost:5000/delete/sprint/{0}'.format(sprint_id))
+    response = requests.get(app.config['SCRUM_API'] + '/delete/sprint/{0}'.format(sprint_id))
     return redirect(url_for('project', project_id=project_id))
 
 
 @app.route('/delete/project/<project_id>', methods=['GET', 'POST'])
 def delete_project(project_id):
-    response = requests.get('http://localhost:5000/delete/project/{0}'.format(project_id))
+    response = requests.get(app.config['SCRUM_API'] + '/delete/project/{0}'.format(project_id))
     return redirect(url_for('index'))
 
 @app.route('/delete/programme/<programme_id>', methods=['GET', 'POST'])
 def delete_programme(programme_id):
-    response = requests.get('http://localhost:5000/delete/programme/{0}'.format(programme_id))
+    response = requests.get(app.config['SCRUM_API'] + '/delete/programme/{0}'.format(programme_id))
     return redirect(url_for('index'))
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -449,13 +449,13 @@ def login():
 
 @app.route('/')
 def index():
-    response = requests.get('http://localhost:5000/get/programmes')
+    response = requests.get(app.config['SCRUM_API'] + '/get/programmes')
     data = response.json()
     return render_template('index.html', data=data)
 
 
 @app.route('/programme/<programme_id>')
 def programme(programme_id):
-    response = requests.get('http://localhost:5000/get/programme/{0}'.format(programme_id))
+    response = requests.get(app.config['SCRUM_API'] + '/get/programme/{0}'.format(programme_id))
     data = response.json()
     return render_template('programme.html', data=data)

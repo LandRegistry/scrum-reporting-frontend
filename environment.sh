@@ -1,3 +1,5 @@
-export SETTINGS="config.DevelopmentConfig"
-export LOGGING_PATH="python_logging/logging.yaml"
-export SECRET_KEY='localdev-not-secret'
+export SALT='passwordsalt'
+export SECRET_KEY='123456790'
+export SETTINGS='config.DevelopmentConfig'
+export SQLALCHEMY_DATABASE_URI='postgresql+pg8000://scrum-users:scrum-users@localhost/scrum-users'
+export SCRUM_API='http://localhost:5000'
