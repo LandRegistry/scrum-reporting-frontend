@@ -1,4 +1,5 @@
 from application import app, db
+import os
 
 from flask import Flask, render_template, request, abort, redirect, url_for, flash
 from flask.ext.login import LoginManager, UserMixin, login_user, logout_user, login_required
@@ -7,11 +8,14 @@ from application.forms import RegistrationForm, ProgrammeForm, ProjectForm, Spri
 import requests
 import json
 from datetime import datetime
+from werkzeug.security import generate_password_hash
+import hashlib
 
 login_manager = LoginManager(app)
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+password_salt = app.config['SALT'].encode('utf-8')
 
 @login_manager.user_loader
 def user_loader(user_id):
@@ -43,16 +47,16 @@ def register():
         return render_template('register.html', form=form)
     elif request.method == 'POST':
         username = form.username.data
-        password = form.password.data
+        password = form.password.data.encode('utf-8')
 
         user = User.query.filter_by(username=username)
         if user.count() == 0:
-            user = User(username=username, password=password)
+            user = User(username=username, password=hashlib.sha512(password + password_salt).hexdigest())
             db.session.add(user)
             db.session.commit()
 
             flash('Welcome {0}. Thank you for registering'.format(username))
-            user = User.query.filter_by(username=username).filter_by(password=password)
+            user = User.query.filter_by(username=username).filter_by(password=hashlib.sha512(password + password_salt).hexdigest())
             login_user(user.one())
             try:
                 next = request.form['next']
@@ -365,9 +369,9 @@ def login():
         return render_template('login.html', next=request.args.get('next'), form=form)
     elif request.method == 'POST':
         username = form.username.data
-        password = form.password.data
+        password = form.password.data.encode('utf-8')
 
-        user = User.query.filter_by(username=username).filter_by(password=password)
+        user = User.query.filter_by(username=username).filter_by(password=hashlib.sha512(password + password_salt).hexdigest())
         if user.count() == 1:
             login_user(user.one())
             flash('Welcome back {0}'.format(username))

@@ -7,9 +7,11 @@ class Config(object):
 class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'postgresql+pg8000://scrum-users:scrum-users@localhost/scrum-users'
     SECRET_KEY = '123456790'
-
+    SALT = 'passwordsalt'
     DEBUG = True
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'postgresql+pg8000://scrum-users:scrum-users@localhost/scrum-users'
     DEBUG = True
+    SECRET_KEY = '123456790'
+    SALT = 'passwordsalt'
