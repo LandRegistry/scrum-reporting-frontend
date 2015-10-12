@@ -10,6 +10,7 @@ import json
 from datetime import datetime
 from werkzeug.security import generate_password_hash
 import hashlib
+from datetime import date, timedelta
 
 login_manager = LoginManager(app)
 login_manager.init_app(app)
@@ -142,6 +143,16 @@ def add_sprint(project_id):
     project_data = response.json()
     form = SprintForm(request.form)
     if request.method == 'GET':
+
+        if project_data['last_sprint_id'] != '':
+            response = requests.get('http://localhost:5000/get/project/{0}/{1}'.format(project_id, project_data['last_sprint_id']))
+            sprint_data = response.json()
+            form.sprint_number.data = int(sprint_data['sprint_number']) + 1
+            form.sprint_days.default = sprint_data['sprint_days']
+            form.end_date.data = datetime.strptime(sprint_data['end_date'], '%Y-%m-%d') + timedelta(days=14)
+            form.start_date.data = datetime.strptime(sprint_data['start_date'], '%Y-%m-%d') + timedelta(days=14)
+            form.sprint_rag.data = sprint_data['sprint_rag']
+
         return render_template('add_sprint.html', form=form, project_data=project_data)
     else:
         sprint_number = form.sprint_number.data
@@ -161,7 +172,7 @@ def add_sprint(project_id):
                 print(sprint_data)
 
                 sprint_days_array = []
-                for i in range(1, (sprint_days + 1)):
+                for i in range(1, (int(sprint_days) + 1)):
                     sprint_days_array.append({"sprint_day": str(i), "sprint_done": "0"})
 
                 payload = {"sprint_id": str(sprint_data['id']), "sprint_days": sprint_days_array}
@@ -359,6 +370,21 @@ def burndown(project_id, sprint_id):
         return redirect(url_for('sprint', project_id=project_id, sprint_id=sprint_id))
 
 
+@app.route('/delete/sprint/<project_id>/<sprint_id>', methods=['GET', 'POST'])
+def delete_sprint(project_id, sprint_id):
+    response = requests.get('http://localhost:5000/delete/sprint/{0}'.format(sprint_id))
+    return redirect(url_for('project', project_id=project_id))
+
+
+@app.route('/delete/project/<project_id>', methods=['GET', 'POST'])
+def delete_project(project_id):
+    response = requests.get('http://localhost:5000/delete/project/{0}'.format(project_id))
+    return redirect(url_for('index'))
+
+@app.route('/delete/programme/<programme_id>', methods=['GET', 'POST'])
+def delete_programme(programme_id):
+    response = requests.get('http://localhost:5000/delete/programme/{0}'.format(programme_id))
+    return redirect(url_for('index'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

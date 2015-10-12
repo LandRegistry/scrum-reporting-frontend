@@ -22,7 +22,15 @@
         {{ render_field(form.programme_name) }}
         {{ render_field(form.programme_manager) }}
         {{ render_field(form.service_manager) }}
-        <button type="submit" class="btn btn-primary">Edit Programme</button>
+
+        <div class="row">
+          <div class="col-md-6 ">
+            <button type="submit" class="btn btn-primary">Edit Programme</button>
+          </div>
+          <div class="col-md-6 ">
+            <button type="button" class="btn btn-danger pull-right" onclick="var r = confirm('Are you sure you want to delete the programme?');if (r == true) {window.location.href = '/delete/programme/{{ programme_data.id }}'};">Delete Programme</button>
+          </div>
+        </div>
       </form>
     </div>
   </div>

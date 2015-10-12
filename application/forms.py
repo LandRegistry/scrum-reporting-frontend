@@ -32,7 +32,7 @@ class SprintForm(Form):
     sprint_dependencies = TextField('Sprint Dependencies', [validators.Length(min=0, max=500)], widget=TextArea())
     end_date = DateField('DatePicker', format='%Y-%m-%d')
     start_date = DateField('DatePicker', format='%Y-%m-%d')
-    sprint_days = IntegerField('Sprint Duration (Working Days)')
+    sprint_days = SelectField('Sprint Duration (Working Days)', choices=[('5', '5'), ('10', '10'), ('15', '15'), ('20', '20')], default='10')
     sprint_risks = TextField('Sprint Risks', [validators.Length(min=0, max=500)], widget=TextArea())
     sprint_goal = TextField('Sprint Goal', [validators.Length(min=0, max=500)], widget=TextArea())
     sprint_rag = SelectField('Sprint RAG', choices=[('r', 'Red'), ('a', 'Amber'), ('g', 'Green')], default='a')

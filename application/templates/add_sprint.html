@@ -28,14 +28,14 @@
 
 
         <fieldset>
-          <label class="form-label" for="">Sprint Start Date</label>
+          <label class="form-label" for="">Sprint Start Date <small>(Format: YYYY-MM-DD)</small></label>
             {{ form.start_date(class='form-control') }}
             {% for error in form.start_date.errors %}
                 <span class="error-block" ><b>Error:</b> {{ error }}</span>
             {% endfor %}
         </fieldset>
         <fieldset>
-          <label class="form-label" for="">Sprint End Date</label>
+          <label class="form-label" for="">Sprint End Date <small>(Format: YYYY-MM-DD)</small></label>
             {{ form.end_date(class='form-control') }}
 
 
