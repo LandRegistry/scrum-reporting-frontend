@@ -149,8 +149,8 @@ def add_sprint(project_id):
             sprint_data = response.json()
             form.sprint_number.data = int(sprint_data['sprint_number']) + 1
             form.sprint_days.data = str(sprint_data['sprint_days'])
-            form.end_date.data = datetime.strptime(sprint_data['end_date'], '%Y-%m-%d') + timedelta(days=14)
-            form.start_date.data = datetime.strptime(sprint_data['start_date'], '%Y-%m-%d') + timedelta(days=14)
+            form.end_date.data = datetime.strptime(sprint_data['end_date'], '%Y-%m-%d') + timedelta(days=(sprint_data['sprint_days'] + ((sprint_data['sprint_days'] /5) * 2)))
+            form.start_date.data = datetime.strptime(sprint_data['start_date'], '%Y-%m-%d') + timedelta(days=(sprint_data['sprint_days'] + ((sprint_data['sprint_days'] /5) * 2)))
             form.sprint_rag.data = sprint_data['sprint_rag']
             form.sprint_risks.data = sprint_data['sprint_risks']
             form.sprint_issues.data = sprint_data['sprint_issues']
@@ -220,6 +220,35 @@ def sprint(project_id, sprint_id):
 
 
     return render_template('sprint.html', sprint_data=sprint_data, project_data=project_data, sprint_days_burndown=','.join(sprint_days_burndown), sprint_days_array=','.join(sprint_days_array), sprint_days_burndown_expected=','.join(sprint_days_burndown_expected))
+
+
+@app.route('/project/<project_id>/<sprint_id>/burndown', methods=['GET', 'POST'])
+def view_burndown(project_id, sprint_id):
+    response = requests.get('http://localhost:5000/get/project/{0}'.format(project_id, sprint_id))
+    project_data = response.json()
+
+    response = requests.get('http://localhost:5000/get/project/{0}/{1}'.format(project_id, sprint_id))
+    sprint_data = response.json()
+
+    points_per_day = sprint_data['agreed_points'] / sprint_data['sprint_days']
+
+    sprint_days_array = []
+    sprint_days_burndown = []
+    sprint_days_burndown_expected = []
+
+    total_points = sprint_data['agreed_points']
+    total_points_expected = sprint_data['agreed_points']
+
+    for d in sprint_data['burndown']:
+        sprint_days_array.append(str(d['sprint_day']))
+        total_points = total_points - int(d['sprint_done'])
+        sprint_days_burndown.append(str(total_points))
+        total_points_expected = total_points_expected - points_per_day
+
+        sprint_days_burndown_expected.append(str(round(total_points_expected)))
+
+
+    return render_template('burndown.html', sprint_data=sprint_data, project_data=project_data, sprint_days_burndown=','.join(sprint_days_burndown), sprint_days_array=','.join(sprint_days_array), sprint_days_burndown_expected=','.join(sprint_days_burndown_expected))
 
 
 @app.route('/project/<project_id>/edit_sprint/<sprint_id>', methods=['GET', 'POST'])
