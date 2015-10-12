@@ -148,10 +148,13 @@ def add_sprint(project_id):
             response = requests.get('http://localhost:5000/get/project/{0}/{1}'.format(project_id, project_data['last_sprint_id']))
             sprint_data = response.json()
             form.sprint_number.data = int(sprint_data['sprint_number']) + 1
-            form.sprint_days.default = sprint_data['sprint_days']
+            form.sprint_days.data = str(sprint_data['sprint_days'])
             form.end_date.data = datetime.strptime(sprint_data['end_date'], '%Y-%m-%d') + timedelta(days=14)
             form.start_date.data = datetime.strptime(sprint_data['start_date'], '%Y-%m-%d') + timedelta(days=14)
             form.sprint_rag.data = sprint_data['sprint_rag']
+            form.sprint_risks.data = sprint_data['sprint_risks']
+            form.sprint_issues.data = sprint_data['sprint_issues']
+            form.sprint_dependencies.data = sprint_data['sprint_dependencies']
 
         return render_template('add_sprint.html', form=form, project_data=project_data)
     else:
@@ -162,10 +165,13 @@ def add_sprint(project_id):
         start_date = str(form.start_date.data)
         end_date = str(form.end_date.data)
         sprint_rag = form.sprint_rag.data
+        sprint_risks = form.sprint_risks.data
+        sprint_issues = form.sprint_issues.data
+        sprint_dependencies = form.sprint_dependencies.data
 
         if form.validate_on_submit():
             if not any(d['sprint_number'] == str(sprint_number) for d in project_data['sprint_array']):
-                payload = {"project_id": project_id, "start_date": start_date, "end_date": end_date, "sprint_number": sprint_number, "sprint_rag": sprint_rag, "sprint_goal": sprint_goal, "sprint_deliverables": "", "sprint_challenges": "", "agreed_points": agreed_points, "delivered_points": "0", "started_points": "0", "sprint_issues": "", "sprint_risks": "", "sprint_dependencies": "", "sprint_days": sprint_days  }
+                payload = {"project_id": project_id, "start_date": start_date, "end_date": end_date, "sprint_number": sprint_number, "sprint_rag": sprint_rag, "sprint_goal": sprint_goal, "sprint_deliverables": "", "sprint_challenges": "", "agreed_points": agreed_points, "delivered_points": "0", "started_points": "0", "sprint_issues": sprint_issues, "sprint_risks": sprint_risks, "sprint_dependencies": sprint_dependencies, "sprint_days": sprint_days  }
                 response = requests.post('http://localhost:5000/add/sprint', data=json.dumps(payload))
                 sprint_data = response.json()
 
@@ -225,7 +231,7 @@ def edit_sprint(project_id, sprint_id):
     sprint_data = response.json()
 
     form = SprintForm(request.form)
-    form.sprint_days.data = sprint_data['sprint_days']
+    form.sprint_days.data = str(sprint_data['sprint_days'])
     form.delivered_points.data = sprint_data['delivered_points']
 
     if request.method == 'GET':
@@ -333,7 +339,7 @@ def edit_programme(programme_id):
                 requests.post('http://localhost:5000/update/programme/{0}'.format(programme_id), data=json.dumps(payload))
 
                 flash('Programme Updated')
-                return redirect(url_for('index'))
+                return redirect(url_for('programme', programme_id=programme_id))
             else:
                 flash('A programme of the same name already exists')
         else:
@@ -417,3 +423,10 @@ def index():
     response = requests.get('http://localhost:5000/get/programmes')
     data = response.json()
     return render_template('index.html', data=data)
+
+
+@app.route('/programme/<programme_id>')
+def programme(programme_id):
+    response = requests.get('http://localhost:5000/get/programme/{0}'.format(programme_id))
+    data = response.json()
+    return render_template('programme.html', data=data)
