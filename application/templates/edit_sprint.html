@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<ol class="breadcrumb">
+  <li><a href="/">Scrum Reporting</a></li>
+  <li><a href="/">{{ project_data.programme_name }}</a></li>
+  <li><a href="/project/{{ project_data.id }}">{{ project_data.name }}</a></li>
+  <li><a href="/project/{{ project_data.id }}/{{sprint_data.sprint_id }}">Sprint {{ sprint_data.sprint_number }}</a></li>
+  <li class="active">Edit Sprint</li>
+
+</ol>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <center>
+        <h1>Edit Sprint {{ sprint_data.sprint_number }}</h1>
+      </center>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <form action="/project/{{ project_data.id }}/edit_sprint/{{ sprint_data.sprint_id }}" method="post">
+        {{ form.csrf_token }}{{form.hidden_tag()}}
+
+
+        {{ render_field(form.sprint_number) }}
+
+        {{ render_field(form.sprint_goal) }}
+        {{ render_field(form.agreed_points) }}
+        {{ render_field(form.started_points) }}
+
+        <fieldset>
+          <label class="form-label" for="">Sprint Start Date</label>
+            {{ form.start_date(class='form-control') }}
+            {% for error in form.start_date.errors %}
+                <span class="error-block" ><b>Error:</b> {{ error }}</span>
+            {% endfor %}
+        </fieldset>
+        <fieldset>
+          <label class="form-label" for="">Sprint End Date</label>
+            {{ form.end_date(class='form-control') }}
+
+
+            {% for error in form.end_date.errors %}
+                <span class="error-block" ><b>Error:</b> {{ error }}</span>
+            {% endfor %}
+        </fieldset>
+
+
+
+
+        {{ render_field(form.sprint_deliverables) }}
+        {{ render_field(form.sprint_dependencies) }}
+        {{ render_field(form.sprint_risks) }}
+        {{ render_field(form.sprint_challenges) }}
+        {{ render_field(form.sprint_issues) }}
+
+
+        {{ render_field(form.sprint_rag) }}
+
+
+        <button type="submit" class="btn btn-primary">Update Sprint</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

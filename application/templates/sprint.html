@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+<ol class="breadcrumb">
+  <li><a href="/">Scrum Reporting</a></li>
+  <li><a href="/">{{ project_data.programme_name }}</a></li>
+  <li><a href="/project/{{ project_data.id }}">{{ project_data.name }}</a></li>
+  <li class="active">Sprint {{ sprint_data.sprint_number }}</li>
+</ol>
+
+
+{% if sprint_data.sprint_rag == 'g' %}
+  {% set sprint_rag = 'success' %}
+  {% set sprint_rag_status = 'Green' %}
+{% elif sprint_data.sprint_rag == 'a' %}
+  {% set sprint_rag = 'warning' %}
+  {% set sprint_rag_status = 'Amber' %}
+{% elif sprint_data.sprint_rag == 'r' %}
+  {% set sprint_rag = 'danger' %}
+  {% set sprint_rag_status = 'Red' %}
+{% else %}
+  {% set sprint_rag = 'default' %}
+  {% set sprint_rag_status = 'Unknown' %}
+{% endif %}
+
+<div class="panel panel-{{ sprint_rag }}">
+  <div class="panel-heading">
+    <div class="row">
+      <div class="col-sm-8" style="font-size: 30px; font-weight: bold;">
+      {{project_data.name}} - Sprint {{sprint_data.sprint_number}}
+      </div>
+      <div class="col-sm-4">
+        {% if current_user.is_authenticated() %}
+        <a href="/project/{{project_data.id}}/edit_sprint/{{sprint_data.sprint_id}}" class="btn btn-info pull-right"><i class="fa fa-pencil-square-o"></i> Edit Sprint</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-4">
+        <b>Start Date:</b> {{sprint_data.start_date}}
+      </div>
+      <div class="col-sm-4">
+        <b>End Date:</b> {{sprint_data.end_date}}
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Sprint Goal</h3>
+          </div>
+          <div class="panel-body">
+            {{sprint_data.sprint_goal}}
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Sprint Deliverables</h3>
+          </div>
+          <div class="panel-body">
+            {{sprint_data.sprint_deliverables}}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-sm-4 text-center">
+                <h3>Planned Points</h3>
+                <h3>{{sprint_data.agreed_points}}</h3>
+              </div>
+              <div class="col-sm-4 text-center">
+                <h3>Completed Points</h3>
+                <h3>{{sprint_data.delivered_points}}</h3>
+              </div>
+              <div class="col-sm-4 text-center">
+                <h3>Started Points</h3>
+                <h3>{{sprint_data.started_points}}</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+
+            <div class="row">
+            <div class="col-sm-8">
+
+              <h3 class="panel-title">Burn Down</h3>
+            </div>
+
+            <div class="col-sm-4">
+              {% if current_user.is_authenticated() %}
+              <a href="/project/{{project_data.id}}/edit_sprint/{{sprint_data.sprint_id}}/burndown" class="btn btn-xs btn-success pull-right"><i class="fa fa-pencil-square-o"></i> Edit Burn Down</a>
+              {% endif %}
+            </div>
+          </div>
+
+          </div>
+          <div class="panel-body">
+            <div style="height: 300px;" class="text-center">
+              <canvas id="velocitychart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Sprint Point Status</h3>
+          </div>
+          <div class="panel-body">
+            <div class="col-xs-6 text-center">
+              <canvas id="piechart" width="200" height="200"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Sprint Risks</h3>
+          </div>
+          <div class="panel-body">
+            {{sprint_data.sprint_risks}}
+
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Sprint Issues</h3>
+          </div>
+          <div class="panel-body">
+            {{sprint_data.sprint_issues}}
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Sprint Dependencies</h3>
+          </div>
+          <div class="panel-body">
+            {{sprint_data.sprint_dependencies}}
+
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Sprint Challenges</h3>
+          </div>
+          <div class="panel-body">
+            {{sprint_data.sprint_challenges}}
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+  </div>
+
+
+
+
+  <script>
+
+var opt = {
+  responsive: true,
+  maintainAspectRatio: false,
+}
+
+
+  var data = [
+      {
+          value: {{sprint_data.delivered_points}},
+  				color: "#46BFBD",
+  				highlight: "#5AD3D1",
+  				label: "Done"
+      },
+      {
+          value: {{sprint_data.started_points}},
+  				color: "#FDB45C",
+          highlight: "#FFC870",
+          label: "Doing"
+      },
+      {
+          value: {{ sprint_data.agreed_points -  sprint_data.delivered_points - sprint_data.started_points}},
+  				color:"#F7464A",
+  				highlight: "#FF5A5E",
+  				label: "Not Started"
+      }
+  ]
+  var ctx = document.getElementById("piechart").getContext("2d");
+  var myPieChart = new Chart(ctx).Pie(data);
+
+
+
+  var data = {
+      labels: [{{ sprint_days_array }}],
+      datasets: [
+          {
+              label: "Planned",
+              fillColor: "rgba(220,220,220,0.2)",
+              strokeColor: "rgba(220,220,220,1)",
+              pointColor: "rgba(220,220,220,1)",
+              pointStrokeColor: "#fff",
+              pointHighlightFill: "#fff",
+              pointHighlightStroke: "rgba(220,220,220,1)",
+              data: [{{ sprint_days_burndown_expected }}]
+          },
+          {
+              label: "Actual",
+              fillColor: "rgba(151,187,205,0.2)",
+              strokeColor: "rgba(151,187,205,1)",
+              pointColor: "rgba(151,187,205,1)",
+              pointStrokeColor: "#fff",
+              pointHighlightFill: "#fff",
+              pointHighlightStroke: "rgba(151,187,205,1)",
+              data: [{{ sprint_days_burndown }}]
+          }
+      ]
+
+  };
+  var ctx = document.getElementById("velocitychart").getContext("2d");
+  var myLineChart = new Chart(ctx).Line(data, opt);
+
+
+  </script>
+
+
+
+
+</div>
+</div>
+
+
+
+
+{% endblock %}

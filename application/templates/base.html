@@ -1,0 +1,52 @@
+{% from "_formhelpers.html" import render_field %}
+<html>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+    <style>
+
+    </style>
+  </head>
+  <body>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+
+    <nav class="navbar navbar-inverse navbar-static-top">
+      <div class="container">
+        <div>
+          <a class="navbar-brand" href="/">Scrum Reporting</a>
+        </div>
+
+
+        <div class="pull-right" style="margin-top:7px;margin-bottom:7px">
+          {% if current_user.is_authenticated() %}
+            <a href="/logout" class="btn btn-danger"><i class="fa fa-sign-out"></i> Logout</a>
+          {% else %}
+            <a href="/login" class="btn btn-success"><i class="fa fa-sign-in"></i> Login</a>
+            <a href="/register" class="btn btn-info">Register</a>
+          {% endif %}
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="container">
+
+          {% for message in messages %}
+          <div class="row">
+            <div class="col-md-12">
+              <div class="alert alert-info" role="alert">{{ message }}</div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        {% endif %}
+      {% endwith %}
+      <div class="container" style="margin-top:0px;margin-bottom:30px">
+        {% block content %}{% endblock %}
+      </div>
+  </body>
+</html>

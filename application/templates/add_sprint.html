@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<ol class="breadcrumb">
+  <li><a href="/">Scrum Reporting</a></li>
+  <li><a href="/">{{ project_data.programme_name }}</a></li>
+  <li><a href="/project/{{ project_data.id }}">{{ project_data.name }}</a></li>
+  <li class="active">Add Sprint</li>
+
+</ol>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <center>
+        <h1>Add Sprint</h1>
+      </center>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <form action="/project/{{ project_data.id }}/add_sprint" method="post">
+        {{ form.csrf_token }}{{form.hidden_tag()}}
+        {{ render_field(form.sprint_number) }}
+        {{ render_field(form.sprint_goal) }}
+        {{ render_field(form.sprint_days) }}
+        {{ render_field(form.agreed_points) }}
+
+
+        <fieldset>
+          <label class="form-label" for="">Sprint Start Date</label>
+            {{ form.start_date(class='form-control') }}
+            {% for error in form.start_date.errors %}
+                <span class="error-block" ><b>Error:</b> {{ error }}</span>
+            {% endfor %}
+        </fieldset>
+        <fieldset>
+          <label class="form-label" for="">Sprint End Date</label>
+            {{ form.end_date(class='form-control') }}
+
+
+            {% for error in form.end_date.errors %}
+                <span class="error-block" ><b>Error:</b> {{ error }}</span>
+            {% endfor %}
+        </fieldset>
+
+
+        {{ render_field(form.sprint_rag) }}
+
+        <button type="submit" class="btn btn-primary">Add Sprint</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
