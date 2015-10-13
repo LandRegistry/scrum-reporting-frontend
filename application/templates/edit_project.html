@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<ol class="breadcrumb">
+  <li><a href="/">Scrum Reporting</a></li>
+  <li><a href="/">{{ project_data.programme_name }}</a></li>
+  <li><a href="/project/{{ project_data.id }}">{{ project_data.name }}</a></li>
+  <li class="active">Edit Project</li>
+</ol>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <center>
+        <h1>Edit Project {{ project_data.name }}</h1>
+      </center>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <form action="/edit_project/{{ project_data.id }}" method="post">
+        {{ form.csrf_token }}{{form.hidden_tag()}}
+        {{ render_field(form.project_name) }}
+        {{ render_field(form.product_owner) }}
+        {{ render_field(form.scrum_master) }}
+        {{ render_field(form.project_description) }}
+
+
+        <div class="row">
+          <div class="col-md-6 ">
+            <button type="submit" class="btn btn-primary">Edit Project</button>
+          </div>
+          <div class="col-md-6 ">
+            <button type="button" class="btn btn-danger pull-right" onclick="var r = confirm('Are you sure you want to delete the project?');if (r == true) {window.location.href = '/delete/project/{{ project_data.id }}'};">Delete Project</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

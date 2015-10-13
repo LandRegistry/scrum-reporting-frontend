@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<ol class="breadcrumb">
+  <li><a href="/">Scrum Reporting</a></li>
+  <li><a href="/">{{ programme_data.name }}</a></li>
+  <li class="active">Edit Programme</li>
+</ol>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <center>
+        <h1>Edit Programme {{ programme_data.name }}</h1>
+      </center>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <form action="/edit_programme/{{ programme_data.id }}" method="post">
+        {{ form.csrf_token }}{{form.hidden_tag()}}
+        {{ render_field(form.programme_name) }}
+        {{ render_field(form.programme_manager) }}
+        {{ render_field(form.service_manager) }}
+
+        <div class="row">
+          <div class="col-md-6 ">
+            <button type="submit" class="btn btn-primary">Edit Programme</button>
+          </div>
+          <div class="col-md-6 ">
+            <button type="button" class="btn btn-danger pull-right" onclick="var r = confirm('Are you sure you want to delete the programme?');if (r == true) {window.location.href = '/delete/programme/{{ programme_data.id }}'};">Delete Programme</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

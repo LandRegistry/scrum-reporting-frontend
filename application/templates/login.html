@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<ol class="breadcrumb">
+  <li><a href="/">Scrum Reporting</a></li>
+  <li class="active">Login</li>
+</ol>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <center>
+        <h1>Login</h1>
+      </center>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <form action="/login" method="post">
+
+        {{ form.csrf_token }}{{form.hidden_tag()}}
+        {{ render_field(form.username) }}
+        {{ render_field(form.password) }}
+        {% if next %}
+        <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+        <button type="submit" class="btn btn-primary">Login</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

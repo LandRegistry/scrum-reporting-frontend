@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<ol class="breadcrumb">
+  <li class="active">Scrum Reporting</li>
+</ol>
+
+{% for data_field in data %}
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+      <div class="row">
+        <div class="col-sm-7" style="font-size: 30px; font-weight: bold;">
+        <a href="/programme/{{ data_field.id }}">{{ data_field.name }}</a>
+        </div>
+        <div class="col-sm-5">
+          {% if current_user.is_authenticated() %}
+          <a href="/add_project/{{ data_field.id }}" class="btn btn-success pull-right" style="margin:5px"><i class="fa fa-plus"></i> New Project</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-4">
+          <b>Programme Manager:</b> {{ data_field.programme_manager }}
+        </div>
+        <div class="col-sm-4">
+          <b>Service Manager:</b>  {{ data_field.service_manager }}
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-body">
+      <div class="row">
+        {% for project_field in data_field.projects %}
+        <div class="col-sm-4">
+          {% if project_field.last_rag == 'g' %}
+            {% set project_rag = 'success' %}
+          {% elif project_field.last_rag == 'a' %}
+            {% set project_rag = 'warning' %}
+          {% elif project_field.last_rag == 'r' %}
+            {% set project_rag = 'danger' %}
+          {% else %}
+            {% set project_rag = 'default' %}
+          {% endif %}
+          <div class="panel panel-{{ project_rag }}">
+            <div class="panel-heading">
+              <h3 class="panel-title">{{project_field.name}}</h3>
+            </div>
+            <div class="panel-body">
+              {{project_field.project_description}}<br/>
+              <a href="/project/{{project_field.id}}">View Sprint Reports</a><br />
+              Product Owner: {{project_field.product_owner}}<br />
+              Scrum Master: {{project_field.scrum_master}}<br />
+              Current Sprint: {{project_field.last_sprint}}<br />
+              Sprint End Date: {{project_field.last_end_date}}<br />
+
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+
+  {% endfor %}
+
+  {% if current_user.is_authenticated() %}
+  <div class="row">
+    <div class="col-sm-12">
+      <a href="/add_programme" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Add New Programme</a>
+    </div>
+  </div>
+  {% endif %}
+{% endblock %}
