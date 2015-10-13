@@ -138,6 +138,7 @@ def project(project_id):
 
 
 @app.route('/project/<project_id>/add_sprint', methods=['GET', 'POST'])
+@login_required
 def add_sprint(project_id):
     response = requests.get(app.config['SCRUM_API'] + '/get/project/{0}'.format(project_id))
     project_data = response.json()
@@ -252,6 +253,7 @@ def view_burndown(project_id, sprint_id):
 
 
 @app.route('/project/<project_id>/edit_sprint/<sprint_id>', methods=['GET', 'POST'])
+@login_required
 def edit_sprint(project_id, sprint_id):
     response = requests.get(app.config['SCRUM_API'] + '/get/project/{0}'.format(project_id, sprint_id))
     project_data = response.json()
@@ -301,6 +303,7 @@ def edit_sprint(project_id, sprint_id):
     return render_template('edit_sprint.html', project_data=project_data, sprint_data=sprint_data, form=form)
 
 @app.route('/edit_project/<project_id>', methods=['GET', 'POST'])
+@login_required
 def edit_project(project_id):
     response = requests.get(app.config['SCRUM_API'] + '/get/project/{0}'.format(project_id))
     project_data = response.json()
@@ -339,6 +342,7 @@ def edit_project(project_id):
         return render_template('edit_project.html', project_data=project_data, form=form)
 
 @app.route('/edit_programme/<programme_id>', methods=['GET', 'POST'])
+@login_required
 def edit_programme(programme_id):
     response = requests.get(app.config['SCRUM_API'] + '/get/programme/{0}'.format(programme_id))
     programme_data = response.json()
@@ -377,6 +381,7 @@ def edit_programme(programme_id):
 
 
 @app.route('/project/<project_id>/edit_sprint/<sprint_id>/burndown', methods=['GET', 'POST'])
+@login_required
 def burndown(project_id, sprint_id):
     response = requests.get(app.config['SCRUM_API'] + '/get/project/{0}'.format(project_id, sprint_id))
     project_data = response.json()
@@ -406,17 +411,20 @@ def burndown(project_id, sprint_id):
 
 
 @app.route('/delete/sprint/<project_id>/<sprint_id>', methods=['GET', 'POST'])
+@login_required
 def delete_sprint(project_id, sprint_id):
     response = requests.get(app.config['SCRUM_API'] + '/delete/sprint/{0}'.format(sprint_id))
     return redirect(url_for('project', project_id=project_id))
 
 
 @app.route('/delete/project/<project_id>', methods=['GET', 'POST'])
+@login_required
 def delete_project(project_id):
     response = requests.get(app.config['SCRUM_API'] + '/delete/project/{0}'.format(project_id))
     return redirect(url_for('index'))
 
 @app.route('/delete/programme/<programme_id>', methods=['GET', 'POST'])
+@login_required
 def delete_programme(programme_id):
     response = requests.get(app.config['SCRUM_API'] + '/delete/programme/{0}'.format(programme_id))
     return redirect(url_for('index'))
