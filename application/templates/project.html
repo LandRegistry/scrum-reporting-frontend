@@ -126,11 +126,16 @@
 </div>
   <script>
 
+
+    Array.max = function( array ){
+        return Math.max.apply( Math, array );
+    };
+
 var opt = {
   responsive: true,
   maintainAspectRatio: false,
   scaleOverride: true,
-  scaleStepWidth: Math.ceil(({{ max_value }} * 1.05) / 5),
+  scaleStepWidth: Math.ceil((Array.max([{{ velocity_value }}]) * 1.05) / 5),
   scaleStartValue: 0,
   scaleSteps: 5,
 }
@@ -152,6 +157,9 @@ var opt = {
   };
   var ctx = document.getElementById("velocitychart").getContext("2d");
   var myLineChart = new Chart(ctx).Line(data, opt);
+
+
+
   </script>
 
 
