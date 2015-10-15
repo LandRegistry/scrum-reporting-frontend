@@ -48,8 +48,9 @@
               <h3 class="panel-title"><a href="/project/{{project_field.id}}">{{project_field.name}}</a></h3>
             </div>
             <div class="panel-body">
-              {{project_field.project_description}}<br/>
+              <b>Description:</b> {{project_field.project_description}}<br/>
               <a href="/project/{{project_field.id}}">View Sprint Reports</a><br />
+
               <b>Product Owner:</b> {{project_field.product_owner}}<br />
               <b>Scrum Master:</b> {{project_field.scrum_master}}<br />
               <b>Current Sprint:</b> {{project_field.last_sprint}}<br />

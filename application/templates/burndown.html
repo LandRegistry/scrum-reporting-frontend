@@ -4,7 +4,7 @@
 
 <ol class="breadcrumb">
   <li><a href="/">Scrum Reporting</a></li>
-  <li><a href="/">{{ project_data.programme_name }}</a></li>
+  <li><a href="/programme/{{ project_data.programme_id }}">{{ project_data.programme_name }}</a></li>
   <li><a href="/project/{{ project_data.id }}">{{ project_data.name }}</a></li>
   <li><a href="/project/{{ project_data.id }}/{{ sprint_data.sprint_id }}">Sprint {{ sprint_data.sprint_number }}</a></li>
   <li class="active">Burndown</li>
