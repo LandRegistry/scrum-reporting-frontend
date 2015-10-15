@@ -132,7 +132,6 @@ def project(project_id):
         velocity_key.append(str(d['sprint_number']))
         velocity_value.append(str(d['delivered_points']))
 
-
     return render_template('project.html', project_data=project_data, velocity_key=','.join(velocity_key), velocity_value=','.join(velocity_value))
 
 
