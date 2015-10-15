@@ -4,7 +4,7 @@
 
 <ol class="breadcrumb">
   <li><a href="/">Scrum Reporting</a></li>
-  <li><a href="/">{{ project_data.programme_name }}</a></li>
+  <li><a href="/programme/{{ project_data.programme_id }}">{{ project_data.programme_name }}</a></li>
   <li><a href="/project/{{ project_data.id }}">{{ project_data.name }}</a></li>
   <li class="active">Sprint {{ sprint_data.sprint_number }}</li>
 </ol>
@@ -57,7 +57,12 @@
             <h3 class="panel-title">Sprint Goal</h3>
           </div>
           <div class="panel-body">
-            {{sprint_data.sprint_goal}}
+            {%- for line in sprint_data.sprint_goal.split('\n') -%}
+            {{ line }}
+            {%- if not loop.last -%}
+            <br />
+            {%- endif -%}
+            {%- endfor -%}
           </div>
         </div>
       </div>
@@ -67,7 +72,12 @@
             <h3 class="panel-title">Sprint Deliverables</h3>
           </div>
           <div class="panel-body">
-            {{sprint_data.sprint_deliverables}}
+            {%- for line in sprint_data.sprint_deliverables.split('\n') -%}
+            {{ line }}
+            {%- if not loop.last -%}
+            <br />
+            {%- endif -%}
+            {%- endfor -%}
           </div>
         </div>
       </div>
@@ -142,8 +152,12 @@
             <h3 class="panel-title">Sprint Risks</h3>
           </div>
           <div class="panel-body">
-            {{sprint_data.sprint_risks}}
-
+            {%- for line in sprint_data.sprint_risks.split('\n') -%}
+            {{ line }}
+            {%- if not loop.last -%}
+            <br />
+            {%- endif -%}
+            {%- endfor -%}
           </div>
         </div>
       </div>
@@ -153,7 +167,12 @@
             <h3 class="panel-title">Sprint Issues</h3>
           </div>
           <div class="panel-body">
-            {{sprint_data.sprint_issues}}
+            {%- for line in sprint_data.sprint_issues.split('\n') -%}
+            {{ line }}
+            {%- if not loop.last -%}
+            <br />
+            {%- endif -%}
+            {%- endfor -%}
 
 
 
@@ -170,7 +189,14 @@
             <h3 class="panel-title">Sprint Dependencies</h3>
           </div>
           <div class="panel-body">
-            {{sprint_data.sprint_dependencies}}
+
+
+            {%- for line in sprint_data.sprint_dependencies.split('\n') -%}
+            {{ line }}
+            {%- if not loop.last -%}
+            <br />
+            {%- endif -%}
+            {%- endfor -%}
 
           </div>
         </div>
@@ -181,8 +207,15 @@
             <h3 class="panel-title">Sprint Challenges</h3>
           </div>
           <div class="panel-body">
-            {{sprint_data.sprint_challenges}}
 
+
+
+{%- for line in sprint_data.sprint_challenges.split('\n') -%}
+{{ line }}
+{%- if not loop.last -%}
+<br />
+{%- endif -%}
+{%- endfor -%}
 
 
           </div>
