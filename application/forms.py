@@ -21,6 +21,8 @@ class ProjectForm(Form):
     project_name = TextField('Project Name', [validators.Length(min=1, max=200)])
     product_owner = TextField('Product Owner', [validators.Length(min=1, max=200)])
     scrum_master = TextField('Scrum Master', [validators.Length(min=1, max=200)])
+    delivery_manager = TextField('Delivery Manager', [validators.Length(min=1, max=299)])
+    scrum_tool_link = TextField('Scrum Tool Link', [validators.Length(min=1, max=600)])
     project_description = TextField('Project Description', [validators.Length(min=1, max=2000)], widget=TextArea())
 
 class SprintForm(Form):

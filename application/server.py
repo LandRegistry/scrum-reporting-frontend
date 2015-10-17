@@ -110,8 +110,10 @@ def add_project(programme_id):
         product_owner = form.product_owner.data
         scrum_master = form.scrum_master.data
         project_description = form.project_description.data
+        delivery_manager = form.delivery_manager.data
+        scrum_tool_link = form.scrum_tool_link.data
         if not any(d['name'] == project_name for d in programme_data['projects']):
-            payload = {"project_name":project_name, "programme_id": programme_id, "product_owner": product_owner, "scrum_master": scrum_master, "project_description": project_description}
+            payload = {"project_name":project_name, "programme_id": programme_id, "product_owner": product_owner, "scrum_master": scrum_master, "project_description": project_description, "delivery_manager": delivery_manager, "scrum_tool_link": scrum_tool_link}
             requests.post(app.config['SCRUM_API'] + '/add/project', data=json.dumps(payload))
             flash('Project {0} added'.format(project_name))
             return redirect(url_for('index'))
@@ -316,6 +318,8 @@ def edit_project(project_id):
         form.product_owner.data = project_data['product_owner']
         form.scrum_master.data = project_data['scrum_master']
         form.project_description.data = project_data['project_description']
+        form.delivery_manager.data  = project_data['delivery_manager']
+        form.scrum_tool_link.data  = project_data['scrum_tool_link']
 
         return render_template('edit_project.html', project_data=project_data, form=form)
     else:
@@ -329,7 +333,7 @@ def edit_project(project_id):
                         project_name_found = True
 
             if project_name_found == False:
-                payload = {"project_name":form.project_name.data, "programme_id": project_data['programme_id'], "product_owner": form.product_owner.data, "scrum_master": form.scrum_master.data, "project_description": form.project_description.data}
+                payload = {"project_name":form.project_name.data, "programme_id": project_data['programme_id'], "product_owner": form.product_owner.data, "scrum_master": form.scrum_master.data, "project_description": form.project_description.data, "delivery_manager": form.delivery_manager.data, "scrum_tool_link": form.scrum_tool_link.data}
                 requests.post(app.config['SCRUM_API'] + '/update/project/{0}'.format(project_id), data=json.dumps(payload))
 
                 flash('Project Updated')
