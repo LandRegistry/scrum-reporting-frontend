@@ -205,7 +205,7 @@ def sprint(project_id, sprint_id):
 
     response = requests.get(app.config['SCRUM_API'] + '/get/project/{0}/sprint_number/{1}'.format(project_id, str(int(sprint_data['sprint_number']) - 1)))
     previous_sprint_data = response.json()
-
+    
     points_per_day = sprint_data['agreed_points'] / sprint_data['sprint_days']
 
     sprint_end_date = datetime.strptime(sprint_data['end_date'] + ' 23:59', '%Y-%m-%d %H:%M')
