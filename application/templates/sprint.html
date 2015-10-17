@@ -98,10 +98,38 @@
               <div class="col-sm-4 text-center">
                 <h3>Planned Points</h3>
                 <h3>{{sprint_data.agreed_points}}</h3>
+                {% if previous_sprint_data.agreed_points %}
+                  {% if previous_sprint_data.agreed_points > 0 %}
+                    {% if sprint_data.agreed_points > 0 %}
+                      {% if previous_sprint_data.agreed_points > sprint_data.agreed_points %}
+                          <small style="color:red"><i class="fa fa-chevron-circle-down"></i> {{ ((previous_sprint_data.agreed_points / sprint_data.agreed_points * 100) - 100)|round|int }}%</small>
+                      {%- else -%}
+                        <small style="color:green"><i class="fa fa-chevron-circle-up"></i> {{ ((sprint_data.agreed_points / previous_sprint_data.agreed_points * 100) - 100)|round|int }}%</small>
+                      {%- endif -%}
+                    {%- else -%}
+                    <small style="color:red"><i class="fa fa-chevron-circle-down"></i>100%</small>
+                    {%- endif -%}
+                  {%- endif -%}
+                 {%- endif -%}
               </div>
               <div class="col-sm-4 text-center">
                 <h3>Completed Points</h3>
                 <h3>{{sprint_data.delivered_points}}</h3>
+
+                {% if previous_sprint_data.delivered_points %}
+                  {% if previous_sprint_data.delivered_points > 0 %}
+                    {% if sprint_data.delivered_points > 0 %}
+                      {% if previous_sprint_data.delivered_points > sprint_data.delivered_points %}
+                          <small style="color:red"><i class="fa fa-chevron-circle-down"></i> {{ ((previous_sprint_data.delivered_points / sprint_data.delivered_points * 100) - 100)|round|int }}%</small>
+                      {%- else -%}
+                        <small style="color:green"><i class="fa fa-chevron-circle-up"></i> {{ ((sprint_data.delivered_points / previous_sprint_data.delivered_points * 100) - 100)|round|int }}%</small>
+                      {%- endif -%}
+                    {%- else -%}
+                    <small style="color:red"><i class="fa fa-chevron-circle-down"></i>100%</small>
+                    {%- endif -%}
+                  {%- endif -%}
+                 {%- endif -%}
+
               </div>
               <div class="col-sm-4 text-center">
                 <h3>Started Points</h3>
@@ -280,12 +308,25 @@
 
 
   <script>
-
+  Array.max = function( array ){
+      return Math.max.apply( Math, array );
+  };
 var opt = {
   responsive: true,
   maintainAspectRatio: false,
   scaleStartValue: 0,
+
 }
+
+var opt2 = {
+  responsive: true,
+  maintainAspectRatio: false,
+  scaleOverride: true,
+  scaleStepWidth: Math.ceil((Array.max([{{ sprint_days_burndown }}]) * 1.05) / 5),
+  scaleStartValue: 0,
+  scaleSteps: 5,
+}
+
 
 
   var data = [
@@ -340,7 +381,7 @@ var opt = {
 
   };
   var ctx = document.getElementById("velocitychart").getContext("2d");
-  var myLineChart = new Chart(ctx).Line(data, opt);
+  var myLineChart = new Chart(ctx).Line(data, opt2);
 
 
   </script>

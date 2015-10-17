@@ -152,7 +152,7 @@ def add_sprint(project_id):
             form.sprint_number.data = int(sprint_data['sprint_number']) + 1
             form.sprint_days.data = str(sprint_data['sprint_days'])
             form.end_date.data = datetime.strptime(sprint_data['end_date'], '%Y-%m-%d') + timedelta(days=(sprint_data['sprint_days'] + ((sprint_data['sprint_days'] /5) * 2)))
-            form.start_date.data = datetime.strptime(sprint_data['start_date'], '%Y-%m-%d') + timedelta(days=(sprint_data['sprint_days'] + ((sprint_data['sprint_days'] /5) * 2)))
+            form.start_date.data = datetime.strptime(sprint_data['start_date'], '%Y-%m-%d') + timedelta(days=(sprint_data['sprint_days'] + ((sprint_data['sprint_days'] /5) * 2) + 1))
             form.sprint_rag.data = sprint_data['sprint_rag']
             form.sprint_risks.data = sprint_data['sprint_risks']
             form.sprint_issues.data = sprint_data['sprint_issues']
@@ -203,6 +203,9 @@ def sprint(project_id, sprint_id):
     response = requests.get(app.config['SCRUM_API'] + '/get/project/{0}/{1}'.format(project_id, sprint_id))
     sprint_data = response.json()
 
+    response = requests.get(app.config['SCRUM_API'] + '/get/project/{0}/sprint_number/{1}'.format(project_id, str(int(sprint_data['sprint_number']) - 1)))
+    previous_sprint_data = response.json()
+
     points_per_day = sprint_data['agreed_points'] / sprint_data['sprint_days']
 
     sprint_end_date = datetime.strptime(sprint_data['end_date'] + ' 23:59', '%Y-%m-%d %H:%M')
@@ -228,7 +231,7 @@ def sprint(project_id, sprint_id):
         sprint_days_burndown_expected.append(str(round(total_points_expected)))
 
 
-    return render_template('sprint.html', sprint_data=sprint_data, project_data=project_data, sprint_days_burndown=','.join(sprint_days_burndown), sprint_days_array=','.join(sprint_days_array), sprint_days_burndown_expected=','.join(sprint_days_burndown_expected), current_sprint=current_sprint)
+    return render_template('sprint.html', sprint_data=sprint_data, project_data=project_data, sprint_days_burndown=','.join(sprint_days_burndown), sprint_days_array=','.join(sprint_days_array), sprint_days_burndown_expected=','.join(sprint_days_burndown_expected), current_sprint=current_sprint, previous_sprint_data=previous_sprint_data)
 
 
 @app.route('/project/<project_id>/<sprint_id>/burndown', methods=['GET', 'POST'])
