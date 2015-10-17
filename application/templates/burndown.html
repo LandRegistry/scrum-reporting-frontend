@@ -47,7 +47,13 @@
 
 
   <div class="panel-body">
-
+    {% if current_sprint == True %}
+      <div class="row">
+        <div class="col-md-12">
+          <div class="alert alert-success text-center" role="alert"><b>This sprint is currently in progress</b></div>
+        </div>
+      </div>
+    {% endif %}
     <div class="row">
       <div class="col-sm-12">
         <div class="panel panel-default">

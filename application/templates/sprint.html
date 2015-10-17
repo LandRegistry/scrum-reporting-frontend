@@ -9,7 +9,6 @@
   <li class="active">Sprint {{ sprint_data.sprint_number }}</li>
 </ol>
 
-
 {% if sprint_data.sprint_rag == 'g' %}
   {% set sprint_rag = 'success' %}
   {% set sprint_rag_status = 'Green' %}
@@ -50,6 +49,15 @@
 
 
   <div class="panel-body">
+
+    {% if current_sprint == True %}
+      <div class="row">
+        <div class="col-md-12">
+          <div class="alert alert-success text-center" role="alert"><b>This sprint is currently in progress</b></div>
+        </div>
+      </div>
+    {% endif %}
+
     <div class="row">
       <div class="col-sm-6">
         <div class="panel panel-default">

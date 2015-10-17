@@ -10,7 +10,7 @@ import json
 from datetime import datetime
 from werkzeug.security import generate_password_hash
 import hashlib
-from datetime import date, timedelta
+from datetime import date, timedelta, time
 
 login_manager = LoginManager(app)
 login_manager.init_app(app)
@@ -205,6 +205,13 @@ def sprint(project_id, sprint_id):
 
     points_per_day = sprint_data['agreed_points'] / sprint_data['sprint_days']
 
+    sprint_end_date = datetime.strptime(sprint_data['end_date'] + ' 23:59', '%Y-%m-%d %H:%M')
+    current_sprint = False
+    if (datetime.now() < sprint_end_date):
+        current_sprint = True
+
+
+
     sprint_days_array = []
     sprint_days_burndown = []
     sprint_days_burndown_expected = []
@@ -221,7 +228,7 @@ def sprint(project_id, sprint_id):
         sprint_days_burndown_expected.append(str(round(total_points_expected)))
 
 
-    return render_template('sprint.html', sprint_data=sprint_data, project_data=project_data, sprint_days_burndown=','.join(sprint_days_burndown), sprint_days_array=','.join(sprint_days_array), sprint_days_burndown_expected=','.join(sprint_days_burndown_expected))
+    return render_template('sprint.html', sprint_data=sprint_data, project_data=project_data, sprint_days_burndown=','.join(sprint_days_burndown), sprint_days_array=','.join(sprint_days_array), sprint_days_burndown_expected=','.join(sprint_days_burndown_expected), current_sprint=current_sprint)
 
 
 @app.route('/project/<project_id>/<sprint_id>/burndown', methods=['GET', 'POST'])
@@ -231,6 +238,12 @@ def view_burndown(project_id, sprint_id):
 
     response = requests.get(app.config['SCRUM_API'] + '/get/project/{0}/{1}'.format(project_id, sprint_id))
     sprint_data = response.json()
+
+
+    sprint_end_date = datetime.strptime(sprint_data['end_date'] + ' 23:59', '%Y-%m-%d %H:%M')
+    current_sprint = False
+    if (datetime.now() < sprint_end_date):
+        current_sprint = True
 
     points_per_day = sprint_data['agreed_points'] / sprint_data['sprint_days']
 
@@ -250,7 +263,7 @@ def view_burndown(project_id, sprint_id):
         sprint_days_burndown_expected.append(str(round(total_points_expected)))
 
 
-    return render_template('burndown.html', sprint_data=sprint_data, project_data=project_data, sprint_days_burndown=','.join(sprint_days_burndown), sprint_days_array=','.join(sprint_days_array), sprint_days_burndown_expected=','.join(sprint_days_burndown_expected))
+    return render_template('burndown.html', sprint_data=sprint_data, project_data=project_data, sprint_days_burndown=','.join(sprint_days_burndown), sprint_days_array=','.join(sprint_days_array), sprint_days_burndown_expected=','.join(sprint_days_burndown_expected), current_sprint=current_sprint)
 
 
 @app.route('/project/<project_id>/edit_sprint/<sprint_id>', methods=['GET', 'POST'])
