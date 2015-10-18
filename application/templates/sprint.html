@@ -151,7 +151,7 @@
 
               <div class="col-sm-12 text-center">
                 <h3>Sprint Man Days</h3>
-                <h3>{{sprint_data.sprint_teamdays}}</h3>
+                <h3>{{sprint_data.sprint_teamdays|replace('None', '0')}}</h3>
 
                 {% if previous_sprint_data.sprint_teamdays %}
                   {% if previous_sprint_data.sprint_teamdays > 0 %}
