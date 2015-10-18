@@ -237,9 +237,9 @@ function update_day(person_id, day_id) {
     url: '/project/{{ project_data.id }}/{{ sprint_data.sprint_id }}/team/update_status/' + day_id,
     data: {'sprint_daystatus': person_status_sorted[array_id].id},
   })
-  //.done(function( msg ) {
-  //  update_json();
-  //})
+  .done(function( msg ) {
+    update_json();
+  })
   ;
 
 }
