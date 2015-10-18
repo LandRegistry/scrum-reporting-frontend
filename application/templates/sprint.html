@@ -91,11 +91,15 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-sm-12">
+      <div class="col-sm-8">
         <div class="panel panel-default">
+
+          <div class="panel-heading">
+            <h3 class="panel-title">Scrum Points Summary</h3>
+          </div>
           <div class="panel-body">
             <div class="row">
-              <div class="col-sm-4 text-center">
+              <div class="col-sm-6 text-center">
                 <h3>Planned Points</h3>
                 <h3>{{sprint_data.agreed_points}}</h3>
                 {% if previous_sprint_data.agreed_points %}
@@ -112,7 +116,7 @@
                   {%- endif -%}
                  {%- endif -%}
               </div>
-              <div class="col-sm-4 text-center">
+              <div class="col-sm-6 text-center">
                 <h3>Completed Points</h3>
                 <h3>{{sprint_data.delivered_points}}</h3>
 
@@ -131,9 +135,38 @@
                  {%- endif -%}
 
               </div>
-              <div class="col-sm-4 text-center">
-                <h3>Started Points</h3>
-                <h3>{{sprint_data.started_points}}</h3>
+
+            </div>
+          </div>
+        </div>
+      </div>
+              <div class="col-sm-4">
+                <div class="panel panel-default">
+
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Sprint Man Days</h3>
+                  </div>
+                  <div class="panel-body">
+                    <div class="row">
+
+              <div class="col-sm-12 text-center">
+                <h3>Sprint Man Days</h3>
+                <h3>{{sprint_data.sprint_teamdays}}</h3>
+
+                {% if previous_sprint_data.sprint_teamdays %}
+                  {% if previous_sprint_data.sprint_teamdays > 0 %}
+                    {% if sprint_data.sprint_teamdays > 0 %}
+                      {% if previous_sprint_data.sprint_teamdays > sprint_data.sprint_teamdays %}
+                          <small style="color:red"><i class="fa fa-chevron-circle-down"></i> {{ ((previous_sprint_data.sprint_teamdays / sprint_data.sprint_teamdays * 100) - 100)|round|int }}%</small>
+                      {%- else -%}
+                        <small style="color:green"><i class="fa fa-chevron-circle-up"></i> {{ ((sprint_data.sprint_teamdays / previous_sprint_data.sprint_teamdays * 100) - 100)|round|int }}%</small>
+                      {%- endif -%}
+                    {%- else -%}
+                    <small style="color:red"><i class="fa fa-chevron-circle-down"></i>100%</small>
+                    {%- endif -%}
+                  {%- endif -%}
+                 {%- endif -%}
+
               </div>
             </div>
           </div>
@@ -300,6 +333,53 @@
       </div>
     </div>
 
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+
+            <div class="row">
+            <div class="col-sm-8">
+
+              <h3 class="panel-title"><a href="/project/{{project_data.id}}/{{sprint_data.sprint_id}}/team">Sprint Availability</a></h3>
+            </div>
+
+            <div class="col-sm-4">
+              {% if current_user.is_authenticated() %}
+              <a href="/project/{{project_data.id}}/{{sprint_data.sprint_id}}/team" class="btn btn-xs btn-success pull-right"><i class="fa fa-pencil-square-o"></i> Edit Sprint Availability</a>
+              {% endif %}
+            </div>
+          </div>
+
+
+
+
+          </div>
+          <div class="panel-body">
+
+            <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      {% for n in sprint_days %}
+                      <th class="text-center">{{n}}</th>
+                      {% endfor %}
+                    </tr>
+                  </thead>
+                  <tbody id="persons_tables">
+
+                  </tbody>
+                </table>
+                <center>
+                <div id="teamkey">
+
+
+                </div>
+              </center>
+          </div>
+        </div>
+      </div>
+    </div>
 
 
   </div>
@@ -382,6 +462,108 @@ var opt2 = {
   };
   var ctx = document.getElementById("velocitychart").getContext("2d");
   var myLineChart = new Chart(ctx).Line(data, opt2);
+
+
+
+  var person_status = [];
+  person_status.push({'id': 0, 'status': 'U', 'fullname': 'Unknown', 'day': 0, 'order': '1', 'color': 'ecf0f1'});
+  {% for daytype in daytype_data %}
+  person_status.push({'id': "{{ daytype.id }}" , 'fullname': "{{daytype.daytype_name}}", 'status': "{{ daytype.daytype_status}}", 'day': "{{daytype.daytype_day}}", 'order': "{{daytype.daytype_order}}", 'color': "{{daytype.daytype_color}}"});
+
+  {% endfor %}
+
+  //person_status.push({'id': 5, 'status': '1/2', 'day': 0.5, 'order': '3', 'color': 'f39c12'});
+  //person_status.push({'id': 6, 'status': 'F', 'day': 1, 'order': '2', 'color': '27ae60'});
+  //person_status.push({'id': 7, 'status': 'L', 'day': 0, 'order': '5', 'color': 'FFFFFF'});
+  //person_status.push({'id': 8, 'status': 'PB', 'day': 1, 'order': '4', 'color': '3498db'});
+  //person_status.push({'id': 9, 'status': 'Tr', 'day': 0, 'order': '6', 'color': '9b59b6'});
+
+  var person_status_sorted = person_status.slice();
+  person_status_sorted.sort(function(a,b){return a.order > b.order})
+
+  var person_status_id = [];
+
+  for (var i in person_status) {
+    person_status_id[person_status[i].id] = {'status': person_status[i].status, 'day': person_status[i].day, 'color': person_status[i].color}
+  }
+
+  for (var i in person_status_sorted) {
+
+    keyhtml = '<div style="display: inline;padding-top:5px;vertical-align: middle;width: 100%; margin:3px;margin-left: 15px"><div style="height:15px;width:15px;background: #' + person_status_sorted[i].color + ';display: inline-block;border:1px solid #888888; margin-right:2px"></div>' +
+      '<span style="vertical-align: top;">' + person_status_sorted[i].fullname + '</span></div>'
+      $( "#teamkey" ).append( keyhtml );
+
+  }
+
+
+  function update_json() {
+
+    $.ajax({
+      method: "GET",
+      url: '/project/{{ project_data.id }}/{{ sprint_data.sprint_id }}/json'
+    })
+      .done(function( msg ) {
+
+        sprint_data = jQuery.parseJSON( msg );
+
+        for (var key in sprint_data.sprintpeople_array) {
+
+            if(! $('#person' + sprint_data.sprintpeople_array[key].id).length )         // use this if you are using id to check
+            {
+              var data_structure = '<tr class="person_row" id="person' + sprint_data.sprintpeople_array[key].id + '">' +
+                 '<th scope="row" class="user" style="width:220px">' + sprint_data.sprintpeople_array[key].person_name +
+                '</th>'
+                for (var key2 in sprint_data.sprintpeople_array[key].sprint_record) {
+                  data_structure = data_structure +  '<td class="text-center" id="person_day' + sprint_data.sprintpeople_array[key].id + '-' + sprint_data.sprintpeople_array[key].sprint_record[key2].id + '" value="0" style="background-color:' + person_status_id[0].color + ';font-weight: bold">' + person_status_id[0].status + '</td>'
+                }
+                data_structure = data_structure +'</tr>'
+
+              $( "#persons_tables" ).append( data_structure );
+
+            }
+
+            for (var key2 in sprint_data.sprintpeople_array[key].sprint_record) {
+              if ($('#person_day' + sprint_data.sprintpeople_array[key].id + '-' + sprint_data.sprintpeople_array[key].sprint_record[key2].id).text() != sprint_data.sprintpeople_array[key].sprint_record[key2].sprint_daystatus) {
+
+
+                if(typeof person_status_id[sprint_data.sprintpeople_array[key].sprint_record[key2].sprint_daystatus] !== 'undefined') {
+
+                 $('#person_day' + sprint_data.sprintpeople_array[key].id + '-' + sprint_data.sprintpeople_array[key].sprint_record[key2].id).val(sprint_data.sprintpeople_array[key].sprint_record[key2].sprint_daystatus)
+                 $('#person_day' + sprint_data.sprintpeople_array[key].id + '-' + sprint_data.sprintpeople_array[key].sprint_record[key2].id).text(person_status_id[sprint_data.sprintpeople_array[key].sprint_record[key2].sprint_daystatus].status)
+                 $('#person_day' + sprint_data.sprintpeople_array[key].id + '-' + sprint_data.sprintpeople_array[key].sprint_record[key2].id).css( "background-color", (person_status_id[sprint_data.sprintpeople_array[key].sprint_record[key2].sprint_daystatus].color));
+
+
+
+                }
+              }
+            }
+
+
+        }
+
+        $( ".person_row" ).each(function( index ) {
+          found_person = false;
+          for (var key in sprint_data.sprintpeople_array) {
+            if (('person' + sprint_data.sprintpeople_array[key].id)  ==  $( this ).attr('id').toString()) {
+                found_person = true;
+              }
+          }
+          if (found_person == false) {
+            $(this).fadeOut(300, function() { $(this).remove(); });
+          }
+        });
+      });
+
+  }
+
+
+
+
+  update_json();
+
+  window.setInterval(function(){
+    update_json();
+  }, 30000);
 
 
   </script>

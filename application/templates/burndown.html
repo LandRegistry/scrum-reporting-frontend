@@ -90,6 +90,10 @@
 var opt = {
   responsive: true,
   maintainAspectRatio: false,
+  scaleOverride: true,
+  scaleStepWidth: Math.ceil((Array.max([{{ sprint_days_burndown }}]) * 1.05) / 5),
+  scaleStartValue: 0,
+  scaleSteps: 5,
 }
 
 
