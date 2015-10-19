@@ -104,7 +104,7 @@
                   <label for="exampleInputPassword1">Add New Person</label>
                   <form class="form-inline">
                     <div class="form-group">
-                      <input type="text" class="form-control"  id="personame" placeholder="Person's Name">
+                      <input type="text" class="form-control"  id="personame" placeholder="Person's Name" onkeypress="return add_person_enter(event)">
                     </div>
                     <button type="button" class="btn btn-default" onclick="add_person()">Add Person</button>
                   </form>
@@ -182,6 +182,14 @@ for (var i in person_status_sorted) {
 
 {% if current_user.is_authenticated() %}
 
+function add_person_enter(e) {
+  console.log(e.keyCode);
+    if (e.keyCode == 13) {
+        add_person();
+        return false;
+    }
+}
+
 function add_person() {
   if ($( "#personame" ).val() != '') {
     $.ajax({
@@ -237,9 +245,9 @@ function update_day(person_id, day_id) {
     url: '/project/{{ project_data.id }}/{{ sprint_data.sprint_id }}/team/update_status/' + day_id,
     data: {'sprint_daystatus': person_status_sorted[array_id].id},
   })
-  //.done(function( msg ) {
-  //  update_json();
-  //})
+  .done(function( msg ) {
+    update_json('#person_day' + person_id + '-' + day_id);
+  })
   ;
 
 }
@@ -252,7 +260,11 @@ function update_day(person_id, day_id) {
 
 
 
-function update_json() {
+function update_json(optionalArg) {
+
+  if (typeof optionalArg === 'undefined') { optionalArg = ''; }
+
+  console.log('optionalArg = ' + optionalArg)
 
   $.ajax({
     method: "GET",
@@ -287,10 +299,12 @@ function update_json() {
 
               if(typeof person_status_id[sprint_data.sprintpeople_array[key].sprint_record[key2].sprint_daystatus] !== 'undefined') {
 
-               $('#person_day' + sprint_data.sprintpeople_array[key].id + '-' + sprint_data.sprintpeople_array[key].sprint_record[key2].id).val(sprint_data.sprintpeople_array[key].sprint_record[key2].sprint_daystatus)
-               $('#person_day' + sprint_data.sprintpeople_array[key].id + '-' + sprint_data.sprintpeople_array[key].sprint_record[key2].id).text(person_status_id[sprint_data.sprintpeople_array[key].sprint_record[key2].sprint_daystatus].status)
-               $('#person_day' + sprint_data.sprintpeople_array[key].id + '-' + sprint_data.sprintpeople_array[key].sprint_record[key2].id).css( "background-color", (person_status_id[sprint_data.sprintpeople_array[key].sprint_record[key2].sprint_daystatus].color));
 
+                if ('#person_day' + sprint_data.sprintpeople_array[key].id + '-' + sprint_data.sprintpeople_array[key].sprint_record[key2].id != optionalArg) {
+                  $('#person_day' + sprint_data.sprintpeople_array[key].id + '-' + sprint_data.sprintpeople_array[key].sprint_record[key2].id).val(sprint_data.sprintpeople_array[key].sprint_record[key2].sprint_daystatus)
+                  $('#person_day' + sprint_data.sprintpeople_array[key].id + '-' + sprint_data.sprintpeople_array[key].sprint_record[key2].id).text(person_status_id[sprint_data.sprintpeople_array[key].sprint_record[key2].sprint_daystatus].status)
+                  $('#person_day' + sprint_data.sprintpeople_array[key].id + '-' + sprint_data.sprintpeople_array[key].sprint_record[key2].id).css( "background-color", (person_status_id[sprint_data.sprintpeople_array[key].sprint_record[key2].sprint_daystatus].color));
+                }
 
 
               }
