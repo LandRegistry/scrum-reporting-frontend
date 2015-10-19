@@ -272,7 +272,6 @@ def sprint(project_id, sprint_id):
     sprint_days = []
     day = 0
     for i in range(1, (int(sprint_data['sprint_days'])) +1):
-        day = day + 1
         date = datetime.strptime(sprint_data['start_date'], '%Y-%m-%d') + timedelta(days=day)
         if date.weekday() in weekend:
             day += 1
@@ -280,6 +279,7 @@ def sprint(project_id, sprint_id):
             if date.weekday() in weekend:
                 day += 1
                 date = datetime.strptime(sprint_data['start_date'], '%Y-%m-%d') + timedelta(days=day)
+        day = day + 1
 
         #print(day)
 
@@ -340,7 +340,6 @@ def view_team(project_id, sprint_id):
     sprint_days = []
     day = 0
     for i in range(1, (int(sprint_data['sprint_days'])) +1):
-        day = day + 1
         date = datetime.strptime(sprint_data['start_date'], '%Y-%m-%d') + timedelta(days=day)
         if date.weekday() in weekend:
             day += 1
@@ -348,6 +347,7 @@ def view_team(project_id, sprint_id):
             if date.weekday() in weekend:
                 day += 1
                 date = datetime.strptime(sprint_data['start_date'], '%Y-%m-%d') + timedelta(days=day)
+        day = day + 1
 
         #print(day)
 
