@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<ol class="breadcrumb">
+  <li><a href="/">Scrum Reporting</a></li>
+  <li><a href="/programme/{{ project_data.programme_id }}">{{ project_data.programme_name }}</a></li>
+  <li><a href="/project/{{ project_data.id }}">{{ project_data.name }}</a></li>
+  <li><a href="/project/{{ project_data.id }}/{{sprint_data.sprint_id }}">Sprint {{ sprint_data.sprint_number }}</a></li>
+  <li class="active">Edit Project Day Types</li>
+
+</ol>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <center>
+        <h1>Edit Project Day Types</h1>
+      </center>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <form action="/project/{{ project_data.id }}/edit_sprint/{{ sprint_data.sprint_id}}/daytypes" method="post">
+
+
+        <table class="table table-striped" >
+          <thead>
+            <tr>
+              <th>Full Name</th>
+              <th>Short Name</th>
+              <th>Day Value</th>
+              <th>Day HEX Color</th>
+              <th>Day Order</th>
+              <th>Remove</th>
+            </tr>
+          </thead>
+          <tbody id="daytypes_body">
+            <tr>
+              <td>Unknown</td>
+              <td>U</td>
+              <td>0.0</td>
+              <td>ECF0F1</td>
+              <td>0</td>
+              <td></td>
+            </tr>
+          {% for daytype in daytype_data %}
+            <tr>
+              <td><input type="hidden" class="form-control" name="daytype_id" value="{{ daytype.id }}">
+              <input type="text" class="form-control" name="daytype_name" value="{{ daytype.daytype_name }}"></td>
+              <td><input type="text" class="form-control" name="daytype_status" value="{{ daytype.daytype_status }}"></td>
+              <td><input type="text" class="form-control" name="daytype_day" value="{{ daytype.daytype_day }}"></td>
+              <td><input type="text" class="form-control" name="daytype_color" value="{{ daytype.daytype_color }}"></td>
+              <td><input type="text" class="form-control" name="daytype_order" value="{{ daytype.daytype_order }}"></td>
+              <td><a href="/project/{{ project_data.id }}/edit_sprint/{{ sprint_data.sprint_id}}/removedaytype/{{ daytype.id }}" class="btn btn-warning">Remove</a></td>
+            </tr>
+          {% endfor  %}
+        </tbody>
+      </table>
+      <button type="button" class="btn btn-default" style="display: block;margin-bottom:10px" onclick="adddaytype()">Add Another Day Type</button>
+
+      <b>Note:</b> The Day Value is how much of a single day that the day type contributes to. This should either be 0, 0.5 (half day) or 1 (full day).
+
+
+
+
+
+      <div class="pull-right" style="margin-top: 10px">
+        <button type="submit" class="btn btn-primary">Update Day Types</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+
+function adddaytype() {
+
+  var data_structure = '<tr>' +
+    '<td><input type="hidden" class="form-control" name="daytype_id" value="0">' +
+    '<input type="text" class="form-control" name="daytype_name" value=""></td>' +
+    '<td><input type="text" class="form-control" name="daytype_status" value=""></td>' +
+    '<td><input type="text" class="form-control" name="daytype_day" value=""></td>' +
+    '<td><input type="text" class="form-control" name="daytype_color" value=""></td>' +
+    '<td><input type="text" class="form-control" name="daytype_order" value=""></td>' +
+    '<td></td>' +
+    '</tr>'
+  $( "#daytypes_body" ).append( data_structure );
+
+}
+
+
+</script>
+
+{% endblock %}

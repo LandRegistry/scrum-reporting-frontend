@@ -46,15 +46,30 @@
           {% endif %}
           <div class="panel panel-{{ project_rag }}">
             <div class="panel-heading">
-              <h3 class="panel-title"><a href="/project/{{project_field.id}}">{{project_field.name}}</a></h3>
+
+              <div class="row">
+              <div class="col-sm-8">
+
+                <h3 class="panel-title"><a href="/project/{{project_field.id}}">{{project_field.name}}</a></h3>
+              </div>
+
+              <div class="col-sm-4">
+                <a href="/project/{{project_field.id}}" class="btn btn-xs btn-info pull-right">View Reports</a>
+              </div>
+            </div>
             </div>
             <div class="panel-body">
-              {{project_field.project_description}}<br/>
+              <b>Description:</b>               {% if (project_field.project_description[:60] == project_field.project_description[:61]) %}
+                              {{project_field.project_description[:60]}}
+                            {% else %}
+                              {{project_field.project_description[:60]}} <a href="/project/{{project_field.id}}">more...</a>
+                            {% endif %}<br/>
               <a href="/project/{{project_field.id}}">View Sprint Reports</a><br />
-              Product Owner: {{project_field.product_owner}}<br />
-              Scrum Master: {{project_field.scrum_master}}<br />
-              Current Sprint: {{project_field.last_sprint}}<br />
-              Sprint End Date: {{project_field.last_end_date}}<br />
+              <b>Product Owner:</b>  {{project_field.product_owner}}<br />
+              <b>Scrum Master:</b>  {{project_field.scrum_master}}<br />
+              <b>Delivery Manager:</b> {{project_field.delivery_manager}}<br />
+              <b>Current Sprint:</b>  {{project_field.last_sprint}}<br />
+              <b>Sprint End Date:</b>  {{project_field.last_end_date}}<br />
 
             </div>
           </div>

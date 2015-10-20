@@ -3,7 +3,7 @@
 
 <ol class="breadcrumb">
   <li><a href="/">Scrum Reporting</a></li>
-  <li><a href="/">{{ programme_data.name }}</a></li>
+  <li><a href="/programme/{{ programme_data.id }}">{{ programme_data.name }}</a></li>
   <li class="active">New Project</li>
 </ol>
 
@@ -22,6 +22,8 @@
         {{ render_field(form.project_name) }}
         {{ render_field(form.product_owner) }}
         {{ render_field(form.scrum_master) }}
+        {{ render_field(form.delivery_manager) }}
+        {{ render_field(form.scrum_tool_link) }}
         {{ render_field(form.project_description) }}
 
         <button type="submit" class="btn btn-primary">Add Project</button>
