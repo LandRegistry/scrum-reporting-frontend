@@ -61,7 +61,15 @@
 
             <div class="row">
             <div class="col-sm-12">
-              <h3 class="panel-title">Burn Down</h3>
+              <h3 class="panel-title">Burn Down
+                <small>
+                {% if sprint_data.burndown_type == 0 %}
+                (Points)
+                {% elif sprint_data.burndown_type == 1 %}
+                (Hours)
+                {% endif %}
+              </small>
+              </h3>
             </div>
           </div>
 
@@ -87,6 +95,12 @@
 
   <script>
 
+  days_array = []
+    {% for sprint_day in sprint_days_array %}
+  days_array.push('{{ sprint_day }} ')
+    {% endfor %}
+
+
   Array.max = function( array ){
       return Math.max.apply( Math, array );
   };
@@ -102,7 +116,7 @@ var opt = {
 
 
   var data = {
-      labels: [{{ sprint_days_array }}],
+      labels: days_array,
       datasets: [
           {
               label: "Planned",

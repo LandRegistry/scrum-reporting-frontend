@@ -40,3 +40,5 @@ class SprintForm(Form):
     sprint_rag = SelectField('Sprint RAG', choices=[('r', 'Red'), ('a', 'Amber'), ('g', 'Green')], default='a')
     sprint_challenges = TextField('Sprint Challenges', [validators.Length(min=0, max=2000)], widget=TextArea())
     sprint_issues = TextField('Sprint Issues', [validators.Length(min=0, max=2000)], widget=TextArea())
+    burndown_type = SelectField('Burndown Type', choices=[('0', 'Points'), ('1', 'Hours')], default='0')
+    burndown_total = IntegerField('Burndown Hours Total')

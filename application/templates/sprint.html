@@ -144,15 +144,14 @@
                 <div class="panel panel-default">
 
                   <div class="panel-heading">
-                    <h3 class="panel-title">Sprint Man Days</h3>
+                    <h3 class="panel-title">Sprint Cost</h3>
                   </div>
                   <div class="panel-body">
                     <div class="row">
 
               <div class="col-sm-12 text-center">
-                <h3>Sprint Man Days</h3>
-                <h3>{{sprint_data.sprint_teamdays|replace('None', '0')}}</h3>
 
+                <h3>{{ "£{:,.2f}".format(sprint_data.sprint_teamdays * 314) }}</h3>
                 {% if previous_sprint_data.sprint_teamdays %}
                   {% if previous_sprint_data.sprint_teamdays > 0 %}
                     {% if sprint_data.sprint_teamdays > 0 %}
@@ -166,6 +165,7 @@
                     {%- endif -%}
                   {%- endif -%}
                  {%- endif -%}
+                 <h4>{{sprint_data.sprint_teamdays|replace('None', '0')}} man days at £314 a day</h4>
 
               </div>
             </div>
@@ -182,7 +182,15 @@
             <div class="row">
             <div class="col-sm-8">
 
-              <h3 class="panel-title"><a href="/project/{{project_data.id}}/{{sprint_data.sprint_id}}/burndown">Burn Down</a></h3>
+              <h3 class="panel-title"><a href="/project/{{project_data.id}}/{{sprint_data.sprint_id}}/burndown">Burn Down</a>
+                <small>
+                {% if sprint_data.burndown_type == 0 %}
+                (Points)
+                {% elif sprint_data.burndown_type == 1 %}
+                (Hours)
+                {% endif %}
+              </small>
+              </h3>
             </div>
 
             <div class="col-sm-4">
@@ -388,6 +396,14 @@
 
 
   <script>
+
+
+days_array = []
+  {% for sprint_day in sprint_days_array %}
+days_array.push('{{ sprint_day }} ')
+  {% endfor %}
+
+
   Array.max = function( array ){
       return Math.max.apply( Math, array );
   };
@@ -435,7 +451,7 @@ var opt2 = {
 
 
   var data = {
-      labels: [{{ sprint_days_array }}],
+      labels: days_array,
       datasets: [
           {
               label: "Planned",

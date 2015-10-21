@@ -22,6 +22,21 @@
     <div class="col-md-8 col-md-offset-2">
       <form action="/project/{{ project_data.id }}/edit_sprint/{{ sprint_data.sprint_id}}/burndown" method="post">
 
+        {% if sprint_data.burndown_type == 1 %}
+
+        <table class="table table-striped" >
+          <tbody>
+            <tr>
+              <th>Total Sprint Hours</th>
+              <td><input type="text" class="form-control" name="burndown_total" value="{{ sprint_data.burndown_total|replace('None', '0') }}"></td>
+            </tr>
+          </tbody>
+      </table>
+
+        {% endif %}
+
+
+
 
 
         <table class="table table-striped" >
@@ -34,7 +49,7 @@
           <tbody>
           {% for sprint_day in sprint_data.burndown %}
             <tr>
-              <td>{{ sprint_day.sprint_day }}<input type="hidden" class="form-control" name="sprintday" value="{{ sprint_day.sprint_day }}"</td>
+              <td>Day {{ sprint_day.sprint_day }} - {{ sprint_days[sprint_day.sprint_day - 1] }}<input type="hidden" class="form-control" name="sprintday" value="{{ sprint_day.sprint_day }}"</td>
               <td><input type="text" class="form-control" name="pointsdone" value="{{ sprint_day.sprint_done }}"></td>
             </tr>
           {% endfor  %}
