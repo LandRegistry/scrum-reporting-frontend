@@ -622,8 +622,9 @@ var opt2 = {
 
   function updateValtextarea(currentEle, value) {
       $(document).off('click');
-
-      $(currentEle).html('<textarea class="form-control" rows="5" id="' + currentEle.attr('id') + '_field">' + value + '</textarea>');
+      if ($("#" + currentEle.attr('id') + '_field').length == 0) {
+        $(currentEle).html('<textarea class="form-control" rows="5" id="' + currentEle.attr('id') + '_field">' + value + '</textarea>');
+      }
       $("#" + currentEle.attr('id') + '_field').focus();
       var value = $("#" + currentEle.attr('id') + '_field').val();
       $("#" + currentEle.attr('id') + '_field').focus().val('').val(value);
@@ -637,7 +638,9 @@ var opt2 = {
 
   function updateValinput(currentEle, value) {
       $(document).off('click');
-      $(currentEle).html('<input class="form-control" id="' + currentEle.attr('id') + '_field" type="text" value="' + value + '" />');
+      if ($("#" + currentEle.attr('id') + '_field').length == 0) {
+        $(currentEle).html('<input class="form-control" id="' + currentEle.attr('id') + '_field" type="text" value="' + value + '" />');
+      }
       $("#" + currentEle.attr('id') + '_field').focus();
       var value = $("#" + currentEle.attr('id') + '_field').val();
       $("#" + currentEle.attr('id') + '_field').focus().val('').val(value);
