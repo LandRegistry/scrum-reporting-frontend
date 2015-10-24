@@ -64,7 +64,7 @@
           <div class="panel-heading">
             <h3 class="panel-title">Sprint Goal</h3>
           </div>
-          <div class="panel-body">
+          <div class="panel-body field_textarea_edit" id="sprint_goal">
             {%- for line in sprint_data.sprint_goal.split('\n') -%}
             {{ line }}
             {%- if not loop.last -%}
@@ -79,7 +79,7 @@
           <div class="panel-heading">
             <h3 class="panel-title">Sprint Deliverables</h3>
           </div>
-          <div class="panel-body">
+          <div class="panel-body field_textarea_edit" id="sprint_deliverables">
             {%- for line in sprint_data.sprint_deliverables.split('\n') -%}
             {{ line }}
             {%- if not loop.last -%}
@@ -99,9 +99,9 @@
           </div>
           <div class="panel-body">
             <div class="row">
-              <div class="col-sm-6 text-center">
-                <h3>Planned Points</h3>
-                <h3>{{sprint_data.agreed_points}}</h3>
+              <div class="col-sm-3 text-center">
+                <h3>Planned</h3>
+                <h3><div id="agreed_points" class="field_input_edit">{{sprint_data.agreed_points}}</div></h3>
                 {% if previous_sprint_data.agreed_points %}
                   {% if previous_sprint_data.agreed_points > 0 %}
                     {% if sprint_data.agreed_points > 0 %}
@@ -116,9 +116,14 @@
                   {%- endif -%}
                  {%- endif -%}
               </div>
-              <div class="col-sm-6 text-center">
-                <h3>Completed Points</h3>
-                <h3>{{sprint_data.delivered_points}}</h3>
+              <div class="col-sm-3 text-center">
+                <h3>Started</h3>
+                <h3> <div id="started_points" class="field_input_edit">{{sprint_data.started_points}}</div></h3>
+              </div>
+              <div class="col-sm-3 text-center">
+                <h3>Completed</h3>
+                <h3>
+                  <div {% if sprint_data.burndown_type == 1 %}id="delivered_points" class="field_input_edit" {%- endif -%}>{{sprint_data.delivered_points}}</div></h3>
 
                 {% if previous_sprint_data.delivered_points %}
                   {% if previous_sprint_data.delivered_points > 0 %}
@@ -135,7 +140,22 @@
                  {%- endif -%}
 
               </div>
+              <div class="col-sm-3 text-center">
+                <h3>Percentage</h3>
+                <h3> <div>
+                  {% if sprint_data.agreed_points > 0 %}
+                    {% if sprint_data.delivered_points > 0 %}
 
+                      {{ ((sprint_data.delivered_points / sprint_data.agreed_points ) * 100)|round(1) }}%
+                    {%- else -%}
+                    0%
+                    {%- endif -%}
+                  {%- else -%}
+                  0%
+                  {%- endif -%}
+
+                </div></h3>
+              </div>
             </div>
           </div>
         </div>
@@ -165,7 +185,7 @@
                     {%- endif -%}
                   {%- endif -%}
                  {%- endif -%}
-                 <h4>{{sprint_data.sprint_teamdays|replace('None', '0')}} man days at £314 a day</h4>
+                 <h4>{{sprint_data.sprint_teamdays|replace('None', '0')}} man days</h4>
 
               </div>
             </div>
@@ -269,7 +289,7 @@
           <div class="panel-heading">
             <h3 class="panel-title">Sprint Risks</h3>
           </div>
-          <div class="panel-body">
+          <div class="panel-body field_textarea_edit" id="sprint_risks">
             {%- for line in sprint_data.sprint_risks.split('\n') -%}
             {{ line }}
             {%- if not loop.last -%}
@@ -284,7 +304,7 @@
           <div class="panel-heading">
             <h3 class="panel-title">Sprint Issues</h3>
           </div>
-          <div class="panel-body">
+          <div class="panel-body field_textarea_edit" id="sprint_issues">
             {%- for line in sprint_data.sprint_issues.split('\n') -%}
             {{ line }}
             {%- if not loop.last -%}
@@ -306,7 +326,7 @@
           <div class="panel-heading">
             <h3 class="panel-title">Sprint Dependencies</h3>
           </div>
-          <div class="panel-body">
+          <div class="panel-body field_textarea_edit" id="sprint_dependencies">
 
 
             {%- for line in sprint_data.sprint_dependencies.split('\n') -%}
@@ -324,7 +344,7 @@
           <div class="panel-heading">
             <h3 class="panel-title">Sprint Challenges</h3>
           </div>
-          <div class="panel-body">
+          <div class="panel-body field_textarea_edit" id="sprint_challenges">
 
 
 
@@ -577,6 +597,92 @@ var opt2 = {
 
   update_json();
 
+
+  {% if current_user.is_authenticated() %}
+
+
+  $(function () {
+      $(".field_input_edit").dblclick(function (e) {
+          e.stopPropagation();
+          var currentEle = $(this);
+          var value = $(this).html();
+          updateValinput(currentEle, value);
+      });
+  });
+
+  $(function () {
+      $(".field_textarea_edit").dblclick(function (e) {
+          e.stopPropagation();
+          var currentEle = $(this);
+          var value = br2nl($(this).html());
+          updateValtextarea(currentEle, value);
+      });
+  });
+
+
+  function updateValtextarea(currentEle, value) {
+      $(document).off('click');
+
+      $(currentEle).html('<textarea class="form-control" rows="5" id="' + currentEle.attr('id') + '_field">' + value + '</textarea>');
+      $("#" + currentEle.attr('id') + '_field').focus();
+      var value = $("#" + currentEle.attr('id') + '_field').val();
+      $("#" + currentEle.attr('id') + '_field').focus().val('').val(value);
+
+      $(document).click(function () {
+        if (event.target.id !== currentEle.attr('id') + '_field') {
+          setValtextarea(currentEle);
+        }
+      });
+  }
+
+  function updateValinput(currentEle, value) {
+      $(document).off('click');
+      $(currentEle).html('<input class="form-control" id="' + currentEle.attr('id') + '_field" type="text" value="' + value + '" />');
+      $("#" + currentEle.attr('id') + '_field').focus();
+      var value = $("#" + currentEle.attr('id') + '_field').val();
+      $("#" + currentEle.attr('id') + '_field').focus().val('').val(value);
+      $("#" + currentEle.attr('id') + '_field').keyup(function (event) {
+          if (event.keyCode == 13) {
+              setValinput(currentEle);
+          }
+      });
+
+      $(document).click(function () {
+        if (event.target.id !== currentEle.attr('id') + '_field') {
+          setValinput(currentEle);
+        }
+      });
+  }
+
+  function setValinput(currentEle) {
+    new_value = $("#" + currentEle.attr('id') + '_field').val().trim();
+    $(currentEle).html(new_value);
+
+    $.ajax({
+      type: "POST",
+      url: '/project/{{ project_data.id }}/edit_sprint/{{ sprint_data.sprint_id }}/field',
+      data: { "key": currentEle.attr('id'), "value" : new_value},
+    });
+  }
+
+  function setValtextarea(currentEle) {
+    new_value = $("#" + currentEle.attr('id') + '_field').val().trim();
+    $(currentEle).html(new_value.replace(/(?:\r\n|\r|\n)/g, '<br />'));
+
+    $.ajax({
+      type: "POST",
+      url: '/project/{{ project_data.id }}/edit_sprint/{{ sprint_data.sprint_id }}/field',
+      data: { "key": currentEle.attr('id'), "value" : new_value},
+    });
+  }
+
+  function br2nl(str) {
+      return str.replace(/<br\s*\/?>/mg,"\n").replace(/&lt;br&gt;/mg, "\n");
+  }
+
+  {% endif %}
+
+
   window.setInterval(function(){
     update_json();
   }, 30000);
@@ -590,7 +696,17 @@ var opt2 = {
 </div>
 </div>
 
+{% if current_user.is_authenticated() %}
 
-
+<style>
+.field_textarea_edit:hover{
+background: #F3F3F3;
+}
+.field_input_edit:hover{
+background: #F3F3F3;
+border-radius: 5px;
+}
+</style>
+{% endif %}
 
 {% endblock %}

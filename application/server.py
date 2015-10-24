@@ -168,7 +168,7 @@ def add_sprint(project_id):
             form.sprint_number.data = int(previous_sprint_data['sprint_number']) + 1
             form.sprint_days.data = str(previous_sprint_data['sprint_days'])
             form.end_date.data = datetime.strptime(previous_sprint_data['end_date'], '%Y-%m-%d') + timedelta(days=(previous_sprint_data['sprint_days'] + ((previous_sprint_data['sprint_days'] /5) * 2)))
-            form.start_date.data = datetime.strptime(previous_sprint_data['start_date'], '%Y-%m-%d') + timedelta(days=(previous_sprint_data['sprint_days'] + ((previous_sprint_data['sprint_days'] /5) * 2) + 1))
+            form.start_date.data = datetime.strptime(previous_sprint_data['start_date'], '%Y-%m-%d') + timedelta(days=(previous_sprint_data['sprint_days'] + ((previous_sprint_data['sprint_days'] /5) * 2)))
             form.sprint_rag.data = previous_sprint_data['sprint_rag']
             form.sprint_risks.data = previous_sprint_data['sprint_risks']
             form.sprint_issues.data = previous_sprint_data['sprint_issues']
@@ -266,25 +266,45 @@ def sprint(project_id, sprint_id):
     if total_points is None:
         total_points = 0
 
+    weekend = set([5, 6])
+
+
+    d0 = datetime.strptime(sprint_data['start_date'], '%Y-%m-%d')
+    d1 = datetime.now()
+    delta = d1 - d0
+    sprint_day_delta =  delta.days
     total_points_expected = total_points
+
+
+
+    sprint_day_delta_noweekend = 0
+    for i in range(0, (int(sprint_day_delta) + 1)):
+        date = datetime.strptime(sprint_data['start_date'], '%Y-%m-%d') + timedelta(days=i)
+        if date.weekday() not in weekend:
+            sprint_day_delta_noweekend = sprint_day_delta_noweekend + 1
+
 
 
     points_per_day = total_points / sprint_data['sprint_days']
 
 
+    d_count = 0
     for d in sprint_data['burndown']:
         sprint_days_array.append(str(d['sprint_day']))
         total_points = total_points - int(d['sprint_done'])
-        sprint_days_burndown.append(str(total_points))
         total_points_expected = total_points_expected - points_per_day
+        if ((current_sprint == False) or (d_count < sprint_day_delta_noweekend)):
+            sprint_days_burndown.append(str(total_points))
 
         sprint_days_burndown_expected.append(str(round(total_points_expected)))
+
+        d_count = d_count + 1
+
 
 
     response = requests.get(app.config['SCRUM_API'] + '/get/daytypes/{0}'.format(project_id))
     daytype_data = response.json()
 
-    weekend = set([5, 6])
 
     sprint_days = []
     day = 0
@@ -326,6 +346,20 @@ def view_burndown(project_id, sprint_id):
 
     weekend = set([5, 6])
 
+    d0 = datetime.strptime(sprint_data['start_date'], '%Y-%m-%d')
+    d1 = datetime.now()
+    delta = d1 - d0
+    sprint_day_delta =  delta.days
+
+
+
+    sprint_day_delta_noweekend = 0
+    for i in range(0, (int(sprint_day_delta) + 1)):
+        date = datetime.strptime(sprint_data['start_date'], '%Y-%m-%d') + timedelta(days=i)
+        if date.weekday() not in weekend:
+            sprint_day_delta_noweekend = sprint_day_delta_noweekend + 1
+
+
     sprint_days_array = []
     sprint_days_burndown = []
     sprint_days_burndown_expected = []
@@ -340,13 +374,21 @@ def view_burndown(project_id, sprint_id):
 
     total_points_expected = total_points
 
+
+    d_count = 0
+
     for d in sprint_data['burndown']:
         sprint_days_array.append(str(d['sprint_day']))
         total_points = total_points - int(d['sprint_done'])
-        sprint_days_burndown.append(str(total_points))
+        if ((current_sprint == False) or (d_count < sprint_day_delta_noweekend)):
+
+            sprint_days_burndown.append(str(total_points))
         total_points_expected = total_points_expected - points_per_day
 
         sprint_days_burndown_expected.append(str(round(total_points_expected)))
+
+        d_count = d_count + 1
+
 
     sprint_days = []
     day = 0
@@ -489,25 +531,19 @@ def edit_sprint(project_id, sprint_id):
     response = requests.get(app.config['SCRUM_API'] + '/get/project/{0}/{1}'.format(project_id, sprint_id))
     sprint_data = response.json()
 
+    sprint_data_update = sprint_data
+
+
     form = SprintForm(request.form)
     form.sprint_days.data = str(sprint_data['sprint_days'])
     form.delivered_points.data = sprint_data['delivered_points']
 
     if request.method == 'GET':
         form.sprint_number.data = sprint_data['sprint_number']
-        form.agreed_points.data = sprint_data['agreed_points']
-        form.sprint_deliverables.data = sprint_data['sprint_deliverables']
-        form.started_points.data = sprint_data['started_points']
-        form.sprint_dependencies.data = sprint_data['sprint_dependencies']
         form.end_date.data = datetime.strptime(sprint_data['end_date'], '%Y-%m-%d')
         form.start_date.data = datetime.strptime(sprint_data['start_date'], '%Y-%m-%d')
-        form.sprint_risks.data = sprint_data['sprint_risks']
-        form.sprint_goal.data = sprint_data['sprint_goal']
         form.sprint_rag.data = sprint_data['sprint_rag']
-        form.sprint_challenges.data = sprint_data['sprint_challenges']
-        form.sprint_issues.data = sprint_data['sprint_issues']
         form.burndown_type.data = str(sprint_data['burndown_type'])
-        form.burndown_total.data = sprint_data['burndown_total']
 
         return render_template('edit_sprint.html', project_data=project_data, sprint_data=sprint_data, form=form)
     else:
@@ -520,7 +556,14 @@ def edit_sprint(project_id, sprint_id):
                         sprint_num_found = True
 
             if sprint_num_found == False:
-                payload = {"project_id":project_id, "sprint_days": form.sprint_days.data, "start_date": str(form.start_date.data), "end_date": str(form.end_date.data), "sprint_number": form.sprint_number.data, "sprint_rag": form.sprint_rag.data, "sprint_goal": form.sprint_goal.data, "sprint_deliverables": form.sprint_deliverables.data, "sprint_challenges": form.sprint_challenges.data, "agreed_points": form.agreed_points.data, "delivered_points": sprint_data['delivered_points'], "started_points": form.started_points.data, "sprint_issues": form.sprint_issues.data, "sprint_risks": form.sprint_risks.data, "sprint_dependencies": form.sprint_dependencies.data, "sprint_teamdays": sprint_data['sprint_teamdays'], "burndown_type": form.burndown_type.data, "burndown_total": form.burndown_total.data  }
+
+                sprint_data_update['sprint_number'] = form.sprint_number.data
+                sprint_data_update['end_date'] = str(form.end_date.data)
+                sprint_data_update['start_date'] = str(form.start_date.data)
+                sprint_data_update['sprint_rag'] = form.sprint_rag.data
+                sprint_data_update['burndown_type'] = str(form.burndown_type.data)
+
+                payload = sprint_data_update
                 requests.post(app.config['SCRUM_API'] + '/update/sprint/{0}'.format(sprint_id), data=json.dumps(payload))
                 sprint_data = response.json()
 
@@ -531,6 +574,17 @@ def edit_sprint(project_id, sprint_id):
         else:
             flash('There was an error, please review')
     return render_template('edit_sprint.html', project_data=project_data, sprint_data=sprint_data, form=form)
+
+@app.route('/project/<project_id>/edit_sprint/<sprint_id>/field', methods=['POST'])
+@login_required
+def edit_sprint_field(project_id, sprint_id):
+    response = requests.get(app.config['SCRUM_API'] + '/get/project/{0}/{1}'.format(project_id, sprint_id))
+    sprint_data = response.json()
+
+    sprint_data[request.form['key']] = request.form['value']
+
+    requests.post(app.config['SCRUM_API'] + '/update/sprint/{0}'.format(sprint_id), data=json.dumps(sprint_data))
+    return 'ok'
 
 @app.route('/edit_project/<project_id>', methods=['GET', 'POST'])
 @login_required
@@ -664,6 +718,11 @@ def burndown(project_id, sprint_id):
         payload = {"sprint_id": str(sprint_id), "sprint_days": sprint_days_array}
         requests.post(app.config['SCRUM_API'] + '/update/burn_down', data=json.dumps(payload))
 
+        print('burndown_type')
+
+        print(sprint_data['burndown_type'])
+        if sprint_data['burndown_type'] == 0:
+            points_done = sprint_data['delivered_points']
         payload = {"project_id":sprint_data['project_id'], "sprint_days": sprint_data['sprint_days'], "start_date": sprint_data['start_date'], "end_date": sprint_data['end_date'], "sprint_number": sprint_data['sprint_number'], "sprint_rag": sprint_data['sprint_rag'], "sprint_goal": sprint_data['sprint_goal'], "sprint_deliverables": sprint_data['sprint_deliverables'], "sprint_challenges": sprint_data['sprint_challenges'], "agreed_points": sprint_data['agreed_points'], "delivered_points": str(points_done), "started_points": sprint_data['started_points'], "sprint_issues": sprint_data['sprint_issues'], "sprint_risks": sprint_data['sprint_risks'], "sprint_dependencies": sprint_data['sprint_dependencies'], "sprint_teamdays": sprint_data['sprint_teamdays'], "burndown_type": sprint_data['burndown_type'], "burndown_total": burndown_total   }
         requests.post(app.config['SCRUM_API'] + '/update/sprint/{0}'.format(sprint_id), data=json.dumps(payload))
 
