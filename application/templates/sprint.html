@@ -171,7 +171,7 @@
 
               <div class="col-sm-12 text-center">
 
-                <h3>{{ "£{:,.2f}".format(sprint_data.sprint_teamdays|replace('None', '0') * 314) }}</h3>
+                <h3>{{ "£{:,.2f}".format(sprint_data.sprint_teamdays|replace('None', 0) * 314) }}</h3>
                 {% if previous_sprint_data.sprint_teamdays %}
                   {% if previous_sprint_data.sprint_teamdays > 0 %}
                     {% if sprint_data.sprint_teamdays > 0 %}
