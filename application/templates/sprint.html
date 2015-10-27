@@ -170,7 +170,7 @@
                     <div class="row">
 
               <div class="col-sm-12 text-center">
-                {% if sprint_data.sprint_teamdays > 0 %}
+                {% if sprint_data.sprint_teamdays != 'None' %}
                 <h3>{{ "£{:,.2f}".format(sprint_data.sprint_teamdays * 314) }}</h3>
                 {%- else -%}
                 <h3>£0.00</h3>
