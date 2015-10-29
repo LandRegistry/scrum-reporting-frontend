@@ -26,9 +26,6 @@
 
         {{ render_field(form.sprint_number) }}
 
-        {{ render_field(form.sprint_goal) }}
-        {{ render_field(form.agreed_points) }}
-        {{ render_field(form.started_points) }}
 
         <fieldset>
           <label class="form-label" for="">Sprint Start Date <small>(Format: YYYY-MM-DD)</small></label>
@@ -45,15 +42,7 @@
             {% endfor %}
         </fieldset>
 
-
-
         {{ render_field(form.burndown_type) }}
-        {{ render_field(form.sprint_deliverables) }}
-        {{ render_field(form.sprint_dependencies) }}
-        {{ render_field(form.sprint_risks) }}
-        {{ render_field(form.sprint_challenges) }}
-        {{ render_field(form.sprint_issues) }}
-
 
         {{ render_field(form.sprint_rag) }}
 
