@@ -44,7 +44,7 @@
           {% else %}
             {% set project_rag = 'default' %}
           {% endif %}
-          <div class="panel panel-{{ project_rag }}">
+          <div class="panel panel-{{ project_rag }}" style="height: 230px;">
             <div class="panel-heading">
 
               <div class="row">
@@ -64,7 +64,6 @@
                             {% else %}
                               {{project_field.project_description[:60]}} <a href="/project/{{project_field.id}}">more...</a>
                             {% endif %}<br/>
-              <a href="/project/{{project_field.id}}">View Sprint Reports</a><br />
               <b>Product Owner:</b>  {{project_field.product_owner}}<br />
               <b>Scrum Master:</b>  {{project_field.scrum_master}}<br />
               <b>Delivery Manager:</b> {{project_field.delivery_manager}}<br />

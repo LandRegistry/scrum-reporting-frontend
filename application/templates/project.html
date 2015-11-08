@@ -109,6 +109,7 @@
                   <th>End Date</th>
                   <th>Planned Points</th>
                   <th>Actual Points</th>
+                  <th>Percentage</th>
                   <th>Sprint RAG</th>
                   <th>Details</th>
                 </tr>
@@ -134,6 +135,19 @@
                   <td>{{ sprint_field.end_date }}</td>
                   <td>{{ sprint_field.agreed_points }}</td>
                   <td>{{ sprint_field.delivered_points }}</td>
+                  <td>
+                    {% if sprint_field.agreed_points > 0 %}
+                      {% if sprint_field.delivered_points > 0 %}
+
+                        {{ ((sprint_field.delivered_points / sprint_field.agreed_points ) * 100)|round(1) }}%
+                      {%- else -%}
+                      0%
+                      {%- endif -%}
+                    {%- else -%}
+                    0%
+                    {%- endif -%}
+
+                  </td>
                   <td>{{ sprint_rag }}</td>
                   <td><a href="/project/{{project_data.id}}/{{sprint_field.id}}">Details</a></td>
                 </tr>
