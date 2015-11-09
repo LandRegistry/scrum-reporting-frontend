@@ -26,7 +26,7 @@ class ProjectForm(Form):
     project_description = TextField('Project Description', [validators.Length(min=1, max=2000)], widget=TextArea())
 
 class SprintForm(Form):
-    sprint_number = IntegerField('Sprint Number', [validators.required(), validators.NumberRange(min=1)])
+    sprint_number = IntegerField('Sprint Number', [validators.required(), validators.NumberRange(min=0)])
     agreed_points = IntegerField('Planned Points')
     sprint_deliverables = TextField('Sprint Deliverables', [validators.Length(min=0, max=2000)], widget=TextArea())
     started_points = IntegerField('Points Started')
