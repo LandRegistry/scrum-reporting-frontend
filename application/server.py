@@ -719,12 +719,18 @@ def burndown(project_id, sprint_id):
         requests.post(app.config['SCRUM_API'] + '/update/burn_down', data=json.dumps(payload))
 
         print('burndown_type')
+        print(points_done)
 
         print(sprint_data['burndown_type'])
+
+
         if sprint_data['burndown_type'] == 1:
             points_done = sprint_data['delivered_points']
+        print(points_done)
 
         payload = {"project_id":sprint_data['project_id'], "sprint_days": sprint_data['sprint_days'], "start_date": sprint_data['start_date'], "end_date": sprint_data['end_date'], "sprint_number": sprint_data['sprint_number'], "sprint_rag": sprint_data['sprint_rag'], "sprint_goal": sprint_data['sprint_goal'], "sprint_deliverables": sprint_data['sprint_deliverables'], "sprint_challenges": sprint_data['sprint_challenges'], "agreed_points": sprint_data['agreed_points'], "delivered_points": str(points_done), "started_points": sprint_data['started_points'], "sprint_issues": sprint_data['sprint_issues'], "sprint_risks": sprint_data['sprint_risks'], "sprint_dependencies": sprint_data['sprint_dependencies'], "sprint_teamdays": sprint_data['sprint_teamdays'], "burndown_type": sprint_data['burndown_type'], "burndown_total": burndown_total   }
+
+        print(payload)
         requests.post(app.config['SCRUM_API'] + '/update/sprint/{0}'.format(sprint_id), data=json.dumps(payload))
 
         flash('Burndown Updated')
