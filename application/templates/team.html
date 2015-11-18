@@ -149,7 +149,7 @@
 
 
 var person_status = [];
-person_status.push({'id': 0, 'status': 'U', 'fullname': 'Unknown', 'day': 0, 'order': '1', 'color': 'ecf0f1'});
+person_status.push({'id': 0, 'status': 'U', 'fullname': 'Unknown', 'day': 0, 'order': '1', 'color': '#FF0000'});
 {% for daytype in daytype_data %}
 person_status.push({'id': "{{ daytype.id }}" , 'fullname': "{{daytype.daytype_name}}", 'status': "{{ daytype.daytype_status}}", 'day': "{{daytype.daytype_day}}", 'order': "{{daytype.daytype_order}}", 'color': "{{daytype.daytype_color}}"});
 
