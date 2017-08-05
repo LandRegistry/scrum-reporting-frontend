@@ -30,7 +30,7 @@
       {{project_data.name}} - Sprint {{sprint_data.sprint_number}}
       </div>
       <div class="col-sm-4">
-        {% if current_user.is_authenticated() %}
+        {% if 1 == 1 %}
         <a href="/project/{{project_data.id}}/edit_sprint/{{sprint_data.sprint_id}}" class="btn btn-info pull-right"><i class="fa fa-pencil-square-o"></i> Edit Sprint</a>
         {% endif %}
       </div>
@@ -214,7 +214,7 @@
             </div>
 
             <div class="col-sm-4">
-              {% if current_user.is_authenticated() %}
+              {% if 1 == 1 %}
               <a href="/project/{{project_data.id}}/edit_sprint/{{sprint_data.sprint_id}}/burndown" class="btn btn-xs btn-success pull-right"><i class="fa fa-pencil-square-o"></i> Edit Burn Down</a>
               {% endif %}
             </div>
@@ -373,7 +373,7 @@
             </div>
 
             <div class="col-sm-4">
-              {% if current_user.is_authenticated() %}
+              {% if 1 == 1 %}
               <a href="/project/{{project_data.id}}/{{sprint_data.sprint_id}}/team" class="btn btn-xs btn-success pull-right"><i class="fa fa-pencil-square-o"></i> Edit Sprint Availability</a>
               {% endif %}
             </div>
@@ -598,7 +598,7 @@ var opt2 = {
   update_json();
 
 
-  {% if current_user.is_authenticated() %}
+  {% if 1 == 1 %}
 
 
   $(function () {
@@ -699,7 +699,7 @@ var opt2 = {
 </div>
 </div>
 
-{% if current_user.is_authenticated() %}
+{% if 1 == 1 %}
 
 <style>
 .field_textarea_edit:hover{

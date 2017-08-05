@@ -32,12 +32,6 @@
 
 
         <div class="pull-right" style="margin-top:7px;margin-bottom:7px">
-          {% if current_user.is_authenticated() %}
-            <a href="/logout" class="btn btn-danger"><i class="fa fa-sign-out"></i> Logout</a>
-          {% else %}
-            <a href="/login" class="btn btn-success"><i class="fa fa-sign-in"></i> Login</a>
-            <a href="/register" class="btn btn-info">Register</a>
-          {% endif %}
         </div><!--/.nav-collapse -->
       </div>
     </nav>

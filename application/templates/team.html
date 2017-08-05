@@ -65,7 +65,7 @@
           </div>
 
           <div class="col-sm-4">
-            {% if current_user.is_authenticated() %}
+            {% if 1 == 1 %}
             <a href="/project/{{project_data.id}}/edit_sprint/{{sprint_data.sprint_id}}/daytypes" class="btn btn-xs btn-info pull-right"><i class="fa fa-pencil-square-o"></i> Edit Day Types</a>
             {% endif %}
           </div>
@@ -99,7 +99,7 @@
                   <div class="col-sm-6">
 
 
-                  {% if current_user.is_authenticated() %}
+                  {% if 1 == 1 %}
 
                   <label for="exampleInputPassword1">Add New Person</label>
                   <form class="form-inline">
@@ -180,7 +180,7 @@ for (var i in person_status_sorted) {
 
 
 
-{% if current_user.is_authenticated() %}
+{% if 1 == 1 %}
 
 function add_person_enter(e) {
   console.log(e.keyCode);
@@ -280,7 +280,7 @@ function update_json(optionalArg) {
           {
             var data_structure = '<tr class="person_row" id="person' + sprint_data.sprintpeople_array[key].id + '">' +
                '<th scope="row" class="user" style="width:220px">' + sprint_data.sprintpeople_array[key].person_name +
-                {% if current_user.is_authenticated() %}
+                {% if 1 == 1 %}
                 '<i class="fa fa-times remove_user_icon" onclick="remove_user(' + sprint_data.sprintpeople_array[key].id + ', \'' + sprint_data.sprintpeople_array[key].person_name.replace('\'', 'quotequote') + '\')"></i>' +
                 {% endif %}
               '</th>'
